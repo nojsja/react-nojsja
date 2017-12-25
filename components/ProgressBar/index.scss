@@ -1,0 +1,67 @@
+/*  进度条组件
+  ============================================================================= */
+  .progress-self {
+    position: relative;
+
+    display: inline-block;
+
+    width: 100%;
+    border: solid 1px #cfd2d2;
+    box-sizing: border-box;
+
+    background-color: white;
+    text-align: left;
+
+    > div.bar {  // 进度条
+      position: relative;
+      top: -1px;
+
+      display: inline-block;
+      box-sizing: border-box;
+      vertical-align: top;
+
+      > span {
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        display: inline-block;
+        box-sizing: border-box;
+        @include boxShadowRound(1px, grey);
+        width: 0.5rem;
+        height: 100%;
+
+        background-color: white;
+      }
+    }
+
+    > span.time-now {  // 当前播放时间
+      position: absolute;
+      top: -0.5rem;
+      left: -5rem;
+
+      display: inline-block;
+      vertical-align: top;
+      height: 1rem;
+      width: 5rem;
+
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    > span.time-total {  // 总共的时间
+      position: absolute;
+      top: -0.5rem;
+      right: -5rem;
+
+      height: 1rem;
+      width: 5rem;
+      display: inline-block;
+      vertical-align: top;
+
+      text-align: center;
+      font-size: .9rem;
+    }
+
+  }
+}
