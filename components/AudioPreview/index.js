@@ -1,3 +1,7 @@
+import ProgressBar from '../ProgressBar/';
+import React, { PropTypes, Component } from 'react';
+import { Icon } from 'semantic-ui-react';
+
 class AudioPreview extends Component {
   constructor(props) {
     super(props);
@@ -219,3 +223,11 @@ class AudioPreview extends Component {
     )
   }
 }
+
+AudioPreview.PropTypes = {
+  dataUrl: PropTypes.string.isRequired  // 媒体数据地址，可以是url地址、二进制本地数据、base64字符串
+};
+
+AudioPreview.defaultProps = {
+
+};

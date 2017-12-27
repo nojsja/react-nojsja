@@ -1,0 +1,9 @@
+/*  注意如果做了全局scrollbar 隐藏处理，本样式要放在靠近根元素的地方才有效果
+============================================================================= */
+.scroll-show {
+  ::-webkit-scrollbar {width: 6px;height:6px;}
+  ::-webkit-scrollbar-track-piece{background-color: #eee;margin: -2px;}
+  ::-webkit-scrollbar-thumb{background: #aaa;min-height: 150px;min-width: 150px;border-radius: 10px;}
+  ::-webkit-scrollbar-thumb:vertical:hover{background: #555555}
+  ::-webkit-scrollbar-thumb:horizontal:hover{background: #555555}
+}

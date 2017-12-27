@@ -1,7 +1,7 @@
 /**
 * @name: SourceTree
 * @description: 可单选多选 可右键选择 可自定义icon和color 资源树组件 (基于Semantic库)
-* @author: 杨伟(yang.wei@datatom.com)
+* @author: NoJsJa
 */
 
 import React, { Component, PropTypes } from 'react';

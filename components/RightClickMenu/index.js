@@ -1,5 +1,5 @@
 /**
- * @author 杨伟(yang.wei@datatom.com)
+ * @author NoJsJa
  */
 
 import React, { Component, PropTypes } from 'react';
