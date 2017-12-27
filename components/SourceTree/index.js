@@ -1,6 +1,6 @@
 /**
 * @name: SourceTree
-* @description: 多层级 可单选多选 可右键选择 资源树组件 (基于Semantic库 Menu组件)
+* @description: 可单选多选 可右键选择 可自定义icon和color 资源树组件 (基于Semantic库)
 * @author: 杨伟(yang.wei@datatom.com)
 */
 
@@ -20,7 +20,11 @@ import './index.scss';
     children[Array]: 标示所有子节点 - 所有节点的数据格式相同
 
   注意:
-    组件使用递归生成，每个根节点下的子节点的 mount 和 unmount操作 比较频繁，暂时不能解决
+    组件会根据treeData(数组)的第一层数据划分为多个根节点，每个根节点管理各自子节点的统一状态，
+    子节点只负责数据呈现和响应DOM事件，在根节点的state中所有层次的子节点状态数据都在一个层次，
+    没有嵌套数据，根节点在组件初始化、组件treeData更新、响应回调函数时会做数据预处理(重名处理
+    、获取真实节点处理、格式化数据处理)。
+    组件使用递归生成，每个根节点下的子节点的 mount 和 unmount操作 比较频繁，暂时不能解决。
 ----------------------------------------------------------------------------- */
                                       /**
                                        * 02. 模拟数据
@@ -88,7 +92,13 @@ import './index.scss';
     ---------------------------------------------------- /
 
     getChecked: PropTypes.func,  //  获取所有选中元素的函数 - [回调函数] - 非必要参数
+                                 //  getChecked函数中 返回的数据依次是：
+                                 //  checkedArray(当前选中元素数组), rootItem(当前元素所属根对象)
+
     setActiveItem: PropTypes.func,  // 点击列表时显示点击对象 - [回调函数] - 非必要参数
+                                    //  setActiveItem函数中 返回的数据依次是: item(当前元素对象),
+                                    //  flag(当前元素标志), root(当前元素所属根对象)
+
     menuHandler: PropTypes.func,  // 右键菜单点击菜单项的事件处理 - [回调函数] - 非必要参数
   };
 
@@ -132,6 +142,8 @@ class ListItem extends Component {
 
   }
 
+  /*   生命周期   */
+
   componentWillMount() {
     const { nodeData }  = this.props;
     this.setState({
@@ -146,6 +158,7 @@ class ListItem extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { nodeData }  = this.props;
+
     this.setState({
       name: nodeData.name,
       flag: nodeData.flag || null,
@@ -153,7 +166,13 @@ class ListItem extends Component {
     })
   }
 
-  // 切换选中显示
+  /*   页面事件和用户操作   */
+
+  /**
+   * [toggleChecked 切换选中状态]
+   * @param  {Object} e       [dom事件对象]
+   * @param  {Bool}   checked [是否被选中]
+   */
   toggleChecked = (e, { checked }) => {
 
     const { setChecked, getChecked, setCheckedSingle, singleChecked } = this.props;
@@ -163,7 +182,9 @@ class ListItem extends Component {
       setChecked(fName, checked);
   }
 
-  // 切换折叠显示
+  /**
+   * [toggleFolding 切换折叠状态]
+   */
   toggleFolding = () => {
 
     const { setFolding } = this.props;
@@ -173,17 +194,48 @@ class ListItem extends Component {
     this.setActiveItem();
   }
 
-
-  // 点击触发
+  /**
+   * [setActiveItem 点击某个资源树节点触发的事件]
+   */
   setActiveItem = () => {
-    const { setActiveItem } = this.props;
+    const { setActiveItem, childrenInfo } = this.props;
     const { name, fName, flag } = this.state;
     if (typeof setActiveItem === 'function') {
-      setActiveItem(name, flag);
+      setActiveItem( this.getRealActiveItem(childrenInfo['child_' + fName] ), flag);
     }
   }
 
-  // checkbox
+  /**
+   * [getRealActiveItem 获取节点真实数据-原始数据为了防止重名做了去重处理]
+   * @param  {Object} nodeData [节点数据]
+   */
+  getRealActiveItem = (nodeData) => {
+    const { childrenInfo } = this.props;
+    let father, children;
+
+    if (nodeData.father && childrenInfo[nodeData.father]) {
+      father = childrenInfo[nodeData.father].name;
+      nodeData = Object.assign({}, nodeData, {
+        father: father,
+      });
+    }
+
+    if (nodeData.children && nodeData.children.length) {
+      nodeData = Object.assign({}, nodeData, {
+        children: nodeData.children.map((child) => {
+          return childrenInfo[child].name
+        })
+      });
+    }
+
+    return nodeData;
+  }
+
+  /*   DOM元素构造   */
+
+  /**
+   * [checkboxContent 选中状态框]
+   */
   checkboxContent = () => {
     const { nodeData, childrenInfo, checkable, singleChecked } = this.props;
     const { name, fName, flag } = nodeData;
@@ -193,6 +245,7 @@ class ListItem extends Component {
         return null;
       }
       const checked = childrenInfo['child_' + fName].checked || false;
+
       return(
         <div style={{display: 'table-cell',paddingRight: '0.5rem'}}>
           <Checkbox onChange={this.toggleChecked} checked={checked}/>
@@ -203,7 +256,10 @@ class ListItem extends Component {
     return null;
   }
 
-  // 子级列表内容
+  /**
+   * [listContent 当前层级元素的子元素]
+   * @param  {Boolean} isFolding [当前层级是否被折叠]
+   */
   listContent = (isFolding) => {
 
     const {
@@ -212,8 +268,8 @@ class ListItem extends Component {
       baseIcon, baseColor
     } = this.props;
     const { children, name, fName }  = nodeData;
-    if(children && children.length) {
 
+    if(children && children.length) {
       const listStyle = isFolding ? 'none' : 'block';
       return (
         <List.List className='List-List' style={{display: listStyle}}>
@@ -239,7 +295,7 @@ class ListItem extends Component {
             })
           }
         </List.List>
-      )
+      );
     }
     return null;
   }
@@ -317,11 +373,6 @@ class ListItem extends Component {
   }
 };
 
-/**
- * [RootListItem 资源树的第一层根节点]
- * @param 参数名 {参数类型} [描述]
- * @return {参数类型} [description]
- */
 
 /* ------------------- 资源树第一层根节点 ------------------- */
 class RootListItem extends Component {
@@ -335,18 +386,28 @@ class RootListItem extends Component {
       checked: false,   //节点是否被选中
       flag: 'base',
 
-      //   会根据子节点个数创建多个child_xxx属性   //
-
+      /*   会根据子节点个数创建多个child_xxx属性   */
       child_name: {   // 这个根节点下的所有层级的子节点
         father: 'name',   // 本级节点的父级节点名
         checked: false,    // 选中状态
-        isFolding: true,
+        isFolding: true,  // 折叠状态
         children: ['child1', 'child2', 'child3'],   // 本级节点的包含的所有子节点
       }
     }
   }
 
-  index = 0  // 子节点索引标示，用于处理子节点重名的情况
+  /*   克隆一份最新的状态数据(用于处理state未及时更新的情况)   */
+  state_clone = {
+
+    child_name: {   // 这个根节点下的所有层级的子节点
+      father: 'name',   // 本级节点的父级节点名
+      checked: false,    // 选中状态
+      isFolding: true,  // 折叠状态
+      children: ['child1', 'child2', 'child3'],   // 本级节点的包含的所有子节点
+    }
+  }
+
+  index = 0  // 子节点索引标识，用于处理子节点重名的情况
   flagMap = {  // 根据节点flag选择icon 和 color
     base: {
       icon: 'folder',
@@ -364,15 +425,16 @@ class RootListItem extends Component {
       icon: 'file outline',
       color: 'blue'
     }
-
   }
-  //   生命周期   //
 
+  /*   生命周期   */
   componentWillReceiveProps(nextProps) {
+    this.index = 0;
     this.formattingData( this.handleRepeatName(nextProps.data) );
   }
 
-  componentWillMount = () => {
+
+  componentWillMount() {
     this.formattingData( this.handleRepeatName(this.props.data) );
   }
 
@@ -412,11 +474,11 @@ class RootListItem extends Component {
       name: data.name,
       flag: data.flag,
       fName: data.fName,
-      ['child_' + data.fName]: {
+      ['child_' + data.fName]: {  // 根节点属性
         father: null,
         name: data.name,
-        checked: false,
-        isFolding: true,
+        checked: (this.state['child_' + data.fName] && this.state['child_' + data.fName].checked) || false,
+        isFolding: (this.state['child_' + data.fName] && this.state['child_' + data.fName].isFolding) || true,
         children: data.children && data.children.map((child) => {
           return 'child_' + child.fName;
         })
@@ -430,11 +492,23 @@ class RootListItem extends Component {
     const iteration = (iData, iName) => {
 
       if (iData.children && iData.children.length) {
+
+        let _isFolding = true;
+        if (this.state_clone['child_' + iData.fName]) {
+          _isFolding = this.state_clone['child_' + iData.fName] ?
+                      (this.state_clone['child_' + iData.fName].isFolding ? true : false) : true ;
+        }else {
+          _isFolding = this.state['child_' + iData.fName] ?
+                      (this.state['child_' + iData.fName].isFolding ? true : false) : true ;
+        }
+
         formattedData['child_' + iData.fName] = {
           father: 'child_' + iName,
           name: iData.name,
-          checked: false,
-          isFolding: true,
+          checked: (this.state['child_' + iData.fName] &&
+                    this.state['child_' + iData.fName].checked) || false,
+          isFolding: _isFolding,
+
           children: iData.children.map((child) => {
             iteration(child, iData.fName);
             return 'child_' + child.fName
@@ -442,11 +516,22 @@ class RootListItem extends Component {
         };
 
       }else {
+        let _isFolding = true;
+        if (this.state_clone['child_' + iData.fName]) {
+          _isFolding = this.state_clone['child_' + iData.fName] ?
+                      (this.state_clone['child_' + iData.fName].isFolding ? true : false) : true ;
+        }else {
+          _isFolding = this.state['child_' + iData.fName] ?
+                      (this.state['child_' + iData.fName].isFolding ? true : false) : true ;
+        }
+
         formattedData['child_' + iData.fName] = {
           father: 'child_' + iName,
           name: iData.name,
-          checked: false,
-          isFolding: true,
+          checked: (this.state['child_' + iData.fName] &&
+                   this.state['child_' + iData.fName].checked) || false,
+          isFolding: _isFolding,
+
           children: null
         }
       }
@@ -457,7 +542,34 @@ class RootListItem extends Component {
     children.map((child) => {
       iteration(child, fName);
     });
+    // 保存克隆数据
+    this.state_clone = formattedData;
     this.setState(formattedData);
+  }
+
+  /**
+   * [getRealActiveItem 获取节点真实数据-原始数据为了防止重名做了去重处理]
+   * @param  {Object} nodeData [节点数据]
+   */
+  getRealActiveItem = (nodeData) => {
+    let father, children;
+
+    if (nodeData.father && this.state[nodeData.father]) {
+      father = this.state[nodeData.father].name;
+      nodeData = Object.assign({}, nodeData, {
+        father: father,
+      });
+    }
+
+    if (nodeData.children && nodeData.children.length) {
+      nodeData = Object.assign({}, nodeData, {
+        children: nodeData.children.map((child) => {
+          return this.state[child].name
+        })
+      });
+    }
+
+    return nodeData;
   }
 
   /**
@@ -472,9 +584,7 @@ class RootListItem extends Component {
         if (key.indexOf('child_') == 0) {
           if (this.state[key].checked) {
             checkedArray.push(
-              Object.assign({}, this.state[key], {
-                name: this.state[key].name.replace('child_', '')
-              })
+              this.getRealActiveItem(this.state[key])
             );
           }
         }
@@ -494,7 +604,7 @@ class RootListItem extends Component {
       if (key === `child_${name}`) {
         temp[key] =
           Object.assign({}, this.state[key], {
-            checked: true
+            checked: status
           });
       }else if (key.indexOf('child_') === 0 && this.state[key].checked) {
         temp[key] =
@@ -507,16 +617,13 @@ class RootListItem extends Component {
     this.setState(temp, () => {
 
       if (typeof getChecked !== 'function') return;
-      let temp = Object.assign({}, this.state[`child_${name}`], {
-        name: this.state[`child_${name}`].name.replace('child_', '')
-      });
-      getChecked(this.state.name, [temp])
+      this.getChecked();
 
     });
   }
 
   /**
-   * [setChecked 设置节点选中状态]
+   * [setChecked 多选条件下设置节点选中状态]
    * @param name {String} [触发选中的节点名]
    * @param status {Boolean} [需要更改的选中状态]
    */
@@ -617,6 +724,8 @@ class RootListItem extends Component {
     this.setState({
       ['child_' + name]: temp
     });
+    // 更新克隆数据
+    this.state_clone['child_'+name].isFolding = !isFolding;
   }
 
   // 手动触发
@@ -629,6 +738,12 @@ class RootListItem extends Component {
     this.setState({
       isFolding: !this.state.isFolding
     });
+  }
+
+  // 得到激活节点的数据
+  setActiveItem = (item, flag) => {
+    const { setActiveItem } = this.props;
+    setActiveItem(item, flag, this.state.name);
   }
 
 
@@ -653,7 +768,7 @@ class RootListItem extends Component {
   // 创建子级资源树
   generateItemTree = (nodeData, isFolding) => {
     const { children } = nodeData;
-    const { checkable, setActiveItem, singleChecked, baseIcon, baseColor } = this.props;
+    const { checkable, singleChecked, baseIcon, baseColor } = this.props;
     if (!children || !children.length) return null;
 
     // 传递选中状态
@@ -664,6 +779,7 @@ class RootListItem extends Component {
           childrenInfo[key] = this.state[key];
         }
     });
+
     const listStyle = isFolding ? 'none' : 'block';
     return (
       <List.List className='List-List' style={{display: listStyle}}>
@@ -677,7 +793,7 @@ class RootListItem extends Component {
                 baseColor={baseColor}
                 childrenInfo={childrenInfo}
                 getChecked={this.getChecked}
-                setActiveItem={setActiveItem}
+                setActiveItem={this.setActiveItem}
                 setChecked={this.setChecked}
                 setCheckedSingle={this.setCheckedSingle}
                 singleChecked={singleChecked}
@@ -697,7 +813,7 @@ class RootListItem extends Component {
   render() {
 
     const {
-      data, checkable, rightClickMenu, setActiveItem,
+      data, checkable, rightClickMenu,
       singleChecked, baseIcon, baseColor
     } = this.props;
     const { flagMap } = this;
@@ -734,13 +850,29 @@ class RootListItem extends Component {
 
         <List.Icon
           name={listIconName}
-          onClick={() => {this.toggleFolding(); setActiveItem(data.name, data.flag)}}
+          onClick={
+            () => {
+              this.toggleFolding();
+              this.setActiveItem(
+                this.getRealActiveItem(this.state[`child_${this.state.fName}`]),
+                data.flag
+              );
+            }
+          }
           className='List-Icon'
           color={listIconColor}
         />
         <List.Content>
           <List.Header
-            onClick={() => {this.toggleFolding(); setActiveItem(data.name, data.flag)}}
+            onClick={
+              () => {
+                this.toggleFolding();
+                this.setActiveItem(
+                  this.getRealActiveItem(this.state[`child_${this.state.fName}`]),
+                  data.flag
+                );
+              }
+            }
             className={listHeaderClass}
           >
 
@@ -785,10 +917,11 @@ class SourceTree extends Component {
   }
 
   // 处理资源树的点击
-  setActiveItem = (item, flag) => {
+  setActiveItem = (item, flag, root) => {
     const { setActiveItem } = this.props;
+
     if (typeof setActiveItem === 'function') {
-      setActiveItem(item, flag);
+      setActiveItem(item, flag, root);
     }
   }
 
@@ -852,13 +985,13 @@ SourceTree.propTypes = {
 
   /*   在回调函数里可以取得资源树返回的数据，比如切换选中状态时，
        我们传入的getChecked函数就会被调用并携带上所有被选中元素的数组   */
-  getChecked: PropTypes.func,  //  获取所有选中元素的函数 - 回调函数 - 非必要参数
-  setActiveItem: PropTypes.func,  // 设置当前激活项 - 回调函数 - 非必要参数
-  menuHandler: PropTypes.func,  // 右键菜单点击菜单项的事件处理 - 回调函数 - 非必要参数
+  getChecked: PropTypes.func,  //  获取所有选中元素的函数 - [回调函数] - 非必要参数
+  setActiveItem: PropTypes.func,  // 设置当前激活项 - [回调函数] - 非必要参数
+  menuHandler: PropTypes.func,  // 右键菜单点击菜单项的事件处理 - [回调函数] - 非必要参数
 };
 
 SourceTree.defaultProps = {
-  checkable: false,  // 默认不支持旋转功能
+  checkable: false,  // 默认不支持选中功能
   singleChecked: false,  // 选中状态下默认是单选
   rightClickMenu: false  // 默认不支持右键菜单
 }
