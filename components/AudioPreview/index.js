@@ -1,8 +1,31 @@
-import ProgressBar from '../ProgressBar/';
+/**
+* @name: AudioPlayer
+* @description: 音频播放器公共组件
+* @author: 杨伟(yang.wei@datatom.com)
+*/
+
 import React, { PropTypes, Component } from 'react';
 import { Icon } from 'semantic-ui-react';
 
-class AudioPreview extends Component {
+// components
+import ProgressBar from 'components/ProgressBar/';
+// style
+import './index.scss';
+// libs
+import { fnDelay, secondsToTime } from 'lib/Util';
+
+/* -----------------------------------------------------------------------------
+  说明:
+    该组件使用了ProgressBar组件，支持点击进度条选择播放进度
+
+  组件属性说明:
+    组件需要传入的唯一参数 - dataUrl - 音频文件地址 - 数据类型支持以下:
+      1. base64-url (base64数据-参考HTML5 FileReader API)
+      2. remote-url (常规的远程地址-http://xxx.xxx.mp3)
+      3. blob-data (音频文件的二进制数据-参考HTML5 FileReader API)
+----------------------------------------------------------------------------- */
+
+export default class AudioPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,15 +67,15 @@ class AudioPreview extends Component {
 
     // 绑定播放进度事件
     this.refs.audioDom.ontimeupdate = () => {
-      FnDelay(  // 每隔4秒更新一次，更新频繁了会卡顿
-        updateProgress, 4000
+      fnDelay(  // 每隔2秒更新一次，更新频繁了会卡顿
+        updateProgress, 2000
       );
     }
 
     // 更新播放时间
     this.refs.audioDom.onloadedmetadata = () => {
       this.setState({
-        total: secondToTime(this.refs.audioDom.duration)
+        total: secondsToTime(this.refs.audioDom.duration)
       });
     }
   }
@@ -90,7 +113,7 @@ class AudioPreview extends Component {
   progress = (value) => {
     this.setState({
       progress: value,
-      now: secondToTime(this.refs.audioDom.currentTime)
+      now: secondsToTime(this.refs.audioDom.currentTime)
     });
   }
 
@@ -169,6 +192,20 @@ class AudioPreview extends Component {
       this.stop();
   }
 
+  /**
+   * [setProgress 进度跳转]
+   */
+  setProgress = (value) => {
+    const duration = this.refs.audioDom.duration;
+    this.refs.audioDom.currentTime = duration * (value / 100);
+
+    this.progress(
+      (this.refs.audioDom.currentTime / this.refs.audioDom.duration) * 100
+    );
+    if (this.refs.audioDom.currentTime === this.refs.audioDom.duration)
+      this.stop();
+  }
+
   render() {
     const { dataUrl } = this.props;
     let { progress, status, volume, now, total } = this.state;
@@ -198,12 +235,15 @@ class AudioPreview extends Component {
           </div>
 
           <div className='progress-wrapper'>
-              <ProgressBar
-                percent={progress}
-                color='#41a7f1' size='mini'
-                now={now}
-                total={total}
-              />
+            <span className='time-now'>{now}</span>
+            <span className='time-total'>{total}</span>
+
+            <ProgressBar
+              percent={progress}
+              color='#41a7f1' size='mini'
+              setProgress={this.setProgress}
+            />
+
           </div>
         </div>
 
@@ -224,10 +264,13 @@ class AudioPreview extends Component {
   }
 }
 
-AudioPreview.PropTypes = {
-  dataUrl: PropTypes.string.isRequired  // 媒体数据地址，可以是url地址、二进制本地数据、base64字符串
+AudioPlayer.propTypes = {
+    dataUrl: PropTypes.string.isRequired  // 音频文件地址, 支持:
+                                          // 1.base64-url (base64数据-参考FileReader API)
+                                          // 2.remote-url (常规的远程地址-http://xxx.xxx.mp3)
+                                          // 3.blob-data (音频文件的二进制数据-参考FileReader API)
 };
 
-AudioPreview.defaultProps = {
+AudioPlayer.defaultProps = {
 
 };

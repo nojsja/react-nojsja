@@ -1,7 +1,7 @@
 /**
 * @name: SourceTree
 * @description: 可单选多选 可右键选择 可自定义icon和color 资源树组件 (基于Semantic库)
-* @author: NoJsJa
+* @author: 杨伟(yang.wei@datatom.com)
 */
 
 import React, { Component, PropTypes } from 'react';
@@ -356,6 +356,7 @@ class ListItem extends Component {
               <div
                 className='list-header-text'
                 data-rightClickMenu={rightClickMenu ? true : false}
+                title={nodeData.name}
               >
                 {nodeData.name}
               </div>
@@ -879,6 +880,7 @@ class RootListItem extends Component {
             <div
               className='list-header-text'
               data-rightClickMenu={rightClickMenu ? true : false}
+              title={data.name}
             >
               {data.name}
             </div>

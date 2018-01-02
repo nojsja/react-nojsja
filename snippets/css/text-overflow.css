@@ -1,0 +1,8 @@
+/*  文字在超出一行时设置省略显示，并显示为...
+============================================================================= */
+.text-overflow {
+  width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

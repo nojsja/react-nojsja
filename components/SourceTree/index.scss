@@ -23,7 +23,7 @@
   border-radius: 5px;
   padding-left: 2px;
   top: -5px;
-  overflow-x: hidden !important;
+  // overflow-x: hidden !important;
 
   transition: all 0.2s;
   font-weight: normal !important;
@@ -47,7 +47,8 @@
 .list-header-text {
   width: 100%;
   height: 1.5rem;
+  overflow: hidden;
 
   line-height: 1.5rem;
-  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
