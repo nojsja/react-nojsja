@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>red-heart</title>
+  </head>
+  <style type="text/css">
+    .css-cell{
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .bubbly{
+      position: absolute;
+      top:50%;
+      left: 50%;
+      transform:translate(-50%,-50%);
+      background: #00ccbb;
+      border-radius: 8px;
+      width: 200px;
+      padding: 40px 10px;
+      text-align: center;
+      color: white;
+      font-size: 20px;
+    }
+    .bubbly:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        border: 34px solid transparent;
+        border-top-color: #00ccbb;
+        border-bottom: 0;
+        border-left: 0;
+        margin: 0 0 -34px -17px;
+    }
+
+  </style>
+
+  <body>
+
+    <div class="css-cell">
+      <div class="bubbly">bubbly</div>
+    </div>
+
+  </body>
+</html>

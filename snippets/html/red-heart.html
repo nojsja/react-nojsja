@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>red-heart</title>
+  </head>
+  <style type="text/css">
+    .css-cell{
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .heart{
+      position: absolute;
+      top:50%;
+      left: 50%;
+      transform:translate(-50%,-50%) rotate(45deg);
+      background: red;
+      width: 100px;
+      height: 100px;
+    }
+
+    .heart:before,
+    .heart:after
+    {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: red;
+    }
+
+    .heart:after{
+        top: -50px;
+        left: 0;
+    }
+
+  </style>
+
+  <body>
+
+    <div class="css-cell">
+      <div class="heart"></div>
+    </div>
+
+  </body>
+</html>
