@@ -1,0 +1,49 @@
+/*  Chrome
+============================================================================= */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/*  FireFox
+============================================================================= */
+html {
+    overflow: -moz-hidden-unscrollable; /*注意！若只打 hidden，chrome 的其它 hidden 会出问题*/
+    height: 100%;
+}
+
+body {
+	height: 100%;
+	width: calc(100vw + 18px); /*浏览器滚动条的长度大约是 18px*/
+	overflow: auto;
+}
+
+/* 使用示例
+
+--html
+<body>
+    <div id="example-1">
+        <p>难臺子哥式自不家草要计在来也见加正活书。</p>
+    </div>
+    <article id="example-2">
+        <h1>意家的不称打准无政！</h1>
+        <p>得研河金起里美希孩有人裡人。料低不。</p>
+        <button>处拉</button>
+    </article>
+</body>
+
+--css
+#example-1 {
+    width: 100vw;
+}
+
+#example-2 {
+    width: 100vw;
+}
+
+*/
+
+/*  IE
+============================================================================= */
+body {
+    -ms-overflow-style: none;
+}

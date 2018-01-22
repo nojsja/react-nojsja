@@ -1,7 +1,7 @@
 ### sass开发规范
 ---------------------------------
 
->author: NoJsJa
+>author: [NoJsJa](https://github.com/NoJsJa)
 
 #### Contents
 ---------------------------------
@@ -329,14 +329,14 @@ $i: 6;
 .content {
   display: block;
 }
- 
+
 .content > .news-article > .title {
   font-size: 1.2em;
 
 /* bad */
 .content {
   display: block;
- 
+
   > .news-article {
     > .title {
       font-size: 1.2em;
@@ -346,7 +346,7 @@ $i: 6;
 /* good */
 content {
   display: block;
- 
+
   > .news-article > .title {
     font-size: 1.2em;
   }
@@ -359,42 +359,42 @@ content {
 /* bad */
 .content-page {
   font-size: 1.2rem;
- 
+
   > .main {
     background-color: whitesmoke;
- 
+
     > .latest-news {
       padding: 1rem;
- 
+
       > .news-article {
         padding: 1rem;
- 
+
         > .title {
           font-size: 2rem;
         }
       }
     }
- 
+
     > .content {
       margin-top: 2rem;
       padding: 1rem;
     }
   }
- 
+
   > .page-footer {
     margin-top: 2rem;
     font-size: 1rem;
   }
 }
- 
+
 @media screen and (min-width: 641px) {
   .content-page {
     font-size: 1rem;
- 
+
     > .main > .latest-news > .news-article > .title {
       font-size: 3rem;
     }
- 
+
     > .page-footer {
       font-size: 0.8rem;
     }
@@ -406,40 +406,40 @@ content {
 /* good */
 .content-page {
   font-size: 1.2rem;
- 
+
   @media screen and (min-width: 641px) {
     font-size: 1rem;
   }
- 
+
   > .main {
     background-color: whitesmoke;
- 
+
     > .latest-news {
       padding: 1rem;
- 
+
       > .news-article {
         padding: 1rem;
- 
+
         > .title {
           font-size: 2rem;
- 
+
           @media screen and (min-width: 641px) {
             font-size: 3rem;
           }
         }
       }
     }
- 
+
     > .content {
       margin-top: 2rem;
       padding: 1rem;
     }
   }
- 
+
   > .page-footer {
     margin-top: 2rem;
     font-size: 1rem;
- 
+
     @media screen and (min-width: 641px) {
       font-size: 0.8rem;
     }
@@ -462,40 +462,40 @@ content {
   padding: 1rem;
   background-color: whitesmoke;
   color: grey;
- 
+
   /* 当前选择器的伪类选择器 */
   &:hover {
     color: black;
   }
- 
+
   &:before {
     content: "";
     display: block;
     border-top: 1px solid grey;
   }
- 
+
   &:after {
     content: "";
     display: block;
     border-top: 1px solid grey;
   }
- 
+
   /* 当前选择器的声明样式 */
   &.active {
     background-color: pink;
     color: red;
   }
- 
+
   /* 上下文媒体查询 */
   @media screen and (max-width: 640px) {
     display: block;
     font-size: 2em;
   }
- 
+
   /* 子选择器 */
   > .content > .title {
     font-size: 1.2em;
- 
+
     /* 子选择器上下文媒体查询 */
     @media screen and (max-width: 640px) {
       letter-spacing: 0.2em;
