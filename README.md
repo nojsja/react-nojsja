@@ -14,7 +14,8 @@ AudioPreview - HTML5音频播放组件
 ModalWindow - 可自定义内容的模态弹窗组件  
 ProgressBar - 可自定义样式的进度条组件  
 RightClickMenu - 右键菜单组件  
-SourceTree - 资源列表树形展示组件   
+SourceTree - 资源列表树形展示组件  
+CheckedTable - 基于Antd的复杂多选表格组件
 
 ### snippets
 
