@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import { Icon, Input, Table, Checkbox, Form } from 'antd';
 import { set } from 'mobx';
 
-import { arrayRemove } from 'utils/utils';
+import { arrayRemove } from '../utils';
 
 const FormItem = Form.Item;
 
