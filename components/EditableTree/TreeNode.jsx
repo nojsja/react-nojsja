@@ -75,9 +75,9 @@ export default class TreeNode extends Component {
   }
 
   getInToEditable = () => {
-    const { treeData, modifyNode } = this.props;
+    const { treeData, getInToEditable } = this.props;
     this.props.setParent('focusKey', treeData.key);
-    modifyNode(treeData.key, {
+    getInToEditable(treeData.key, {
       ...treeData,
       isInEdit: true,
     });
@@ -103,6 +103,7 @@ export default class TreeNode extends Component {
     const { treeData, focusKey } = this.props;
     const { lang } = this.props.lang;
     const editValueInputVisible = !(treeData.nodeValue instanceof Array);
+    const editNameInputVisible = (!treeData.nodeName && !treeData.nodeValue) || treeData.nodeName || (treeData.nodeValue && typeCheck(treeData.nodeValue, 'array'));
     const actionAddNodeVisible = (treeData.nodeValue || treeData.nodeName) && (!treeData.nodeValue || treeData.nodeValue instanceof Array);
 
     return (
@@ -116,13 +117,27 @@ export default class TreeNode extends Component {
             (
               <React.Fragment>
                 <Col span={8}>
-                  <Input ref={this.editNameInputRef} className="normal-text" size="small" onChange={this.onNodeNameChange} defaultValue={treeData.nodeName} />
-                </Col>：
+                  <Input
+                    ref={this.editNameInputRef}
+                    className="normal-text"
+                    disabled={!treeData.nameEditable}
+                    size="small"
+                    onChange={this.onNodeNameChange}
+                    defaultValue={treeData.nodeName}
+                  />
+                </Col>
+                ：
                 {
                   (editValueInputVisible) &&
-                  <Col span={8}>
-                    <Input className="normal-text" size="small" onChange={this.onNodeValueChange} defaultValue={treeData.nodeValue} />
-                  </Col>
+                  (<Col span={8}>
+                    <Input
+                      className="normal-text"
+                      size="small"
+                      disabled={!treeData.valueEditable}
+                      onChange={this.onNodeValueChange}
+                      defaultValue={treeData.nodeValue}
+                    />
+                  </Col>)
                 }
                 <Col span={2}>
                   <div className="editable-tree-edit-confirm successColor">
@@ -137,19 +152,25 @@ export default class TreeNode extends Component {
         {
           !treeData.isInEdit &&
             (<React.Fragment>
-              <Col span={8}>
-                <Input
-                  size="small"
-                  className="normal-text"
-                  onFocus={treeData.nameEditable ? this.getInToEditable : undefined}
-                  defaultValue={treeData.nodeName}
-                />
-              </Col>：
+              {
+                (editNameInputVisible) &&
+                (<Col span={8}>
+                  <Input
+                    size="small"
+                    className="normal-text"
+                    disabled={!treeData.nameEditable}
+                    onFocus={treeData.nameEditable ? this.getInToEditable : undefined}
+                    defaultValue={treeData.nodeName}
+                  />
+                </Col>)
+              }
+              {editNameInputVisible && <span>：</span>}
               {
                 editValueInputVisible &&
                   <Col span={8}>
                     <Input
                       className="normal-text"
+                      disabled={!treeData.valueEditable}
                       onFocus={treeData.valueEditable ? this.getInToEditable : undefined}
                       size="small"
                       defaultValue={treeData.nodeValue}

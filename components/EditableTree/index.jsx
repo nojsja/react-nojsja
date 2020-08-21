@@ -66,6 +66,15 @@ class EditableTree extends Component {
     }, () => this.onDataChange(this.dataOrigin));
   }
 
+  /* 进入编辑模式 */
+  getInToEditable = (key, treeNode) => {
+    const modifiedData = this.treeModel.getInToEditable(key, treeNode);
+    console.log('get in edit Node: ', key, modifiedData);
+    this.setState({
+      treeData: this.formatTreeData(modifiedData),
+    }, () => this.onDataChange(this.dataOrigin));
+  }
+
   /* 添加一个兄弟节点 */
   addSisterNode = (key) => {
     const modifiedData = this.treeModel.addSisterNode(key);
@@ -107,6 +116,7 @@ class EditableTree extends Component {
           treeData={treeData}
           modifyNode={this.modifyNode}
           addSisterNode={this.addSisterNode}
+          getInToEditable={this.getInToEditable}
           addSubNode={this.addSubNode}
           removeNode={this.removeNode}
           setFocus={this.setFocus}

@@ -1,14 +1,29 @@
-import { getRandomString } from '../utils';
-import openNotification from 'utils/noticeFilter';
+import { getRandomString, typeCheck } from '../utils';
+import openNotification from '../noticeFilter';
 
 // @inject('lang')
 // @observer
 export default class Tree {
-  constructor(data, treeKey, { maxLevel, overLevelTips = '' }) {
+  constructor(data, treeKey, {
+    maxLevel,
+    overLevelTips = '已经限制模板树的最大深度为：',
+    addSameLevelTips = '同层级已经有同名节点被添加！',
+  }) {
     this.treeData = data;
     this.treeKey = treeKey;
     this.maxLevel = maxLevel;
     this.overLevelTips = overLevelTips;
+    this.addSameLevelTips = addSameLevelTips;
+  }
+
+  /* 编辑/添加节点的时候检测同一层级是否有同名/同value节点 */
+  static checkNodeIsExitsInSameLevel = (node, nodeArray = []) => {
+    let checkLable = 'nodeName';
+    if (!node.nodeName && !node.nodeValue) return false;
+    if (!node.nodeName && node.nodeValue) {
+      checkLable = 'nodeValue';
+    }
+    return !!nodeArray.find(item => (item[checkLable] === node[checkLable] && node.key !== item.key));
   }
 
   /* 默认值填充 */
@@ -56,6 +71,64 @@ export default class Tree {
     return level;
   }
 
+  getInToEditableOne(nodeArray, {
+    nodeName, nodeValue, id, key, isInEdit,
+  }) {
+    for (let i = 0; i < nodeArray.length; i++) {
+      const node = nodeArray[i];
+      if (node.key === key) {
+        const nodeIsExitsInSameLevel =
+          Tree.checkNodeIsExitsInSameLevel({
+            id, nodeName, nodeValue, key,
+          }, nodeArray);
+        if (nodeIsExitsInSameLevel) return openNotification('warning', null, this.addSameLevelTips);
+        node.isInEdit = isInEdit;
+      } else {
+        node.isInEdit = false;
+      }
+      if (node.nodeValue && (node.nodeValue instanceof Array)) {
+        this.getInToEditableOne(node.nodeValue, {
+          isInEdit,
+          nodeName,
+          nodeValue,
+          id,
+          key,
+        });
+      }
+    }
+  }
+
+  /* 进入编辑模式 */
+  getInToEditable(key, {
+    nodeName, nodeValue, id, isInEdit,
+  } = {}) {
+    const findInEdit = (items) => {
+      let isEdit = false;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].isInEdit && items[i].key !== key) {
+          isEdit = items[i];
+        }
+        if (typeCheck(items[i].nodeValue, 'array')) {
+          isEdit = findInEdit(items[i].nodeValue);
+        }
+        if (isEdit) break;
+      }
+      return isEdit;
+    };
+    // console.log('find in edit:', findInEdit(this.treeData));
+    // if (findInEdit(this.treeData)) return this.getTreeData();
+
+    this.getInToEditableOne(this.treeData, {
+      nodeName,
+      nodeValue,
+      isInEdit,
+      key,
+      id,
+    });
+
+    return this.getTreeData();
+  }
+
   modifyOneNode(nodeArray, {
     nodeName,
     nodeValue,
@@ -68,12 +141,17 @@ export default class Tree {
     for (let i = 0; i < nodeArray.length; i++) {
       const node = nodeArray[i];
       if (node.key === key) {
+        const nodeIsExitsInSameLevel =
+          Tree.checkNodeIsExitsInSameLevel({
+            nodeName, nodeValue, key,
+          }, nodeArray);
+        if (nodeIsExitsInSameLevel) openNotification('warning', null, this.addSameLevelTips);
         node.nameEditable = nameEditable;
         node.valueEditable = valueEditable;
         node.nodeName = nodeName;
         node.nodeValue = nodeValue;
         node.nodeDeletable = nodeDeletable;
-        node.isInEdit = isInEdit;
+        node.isInEdit = nodeIsExitsInSameLevel ? node.isInEdit : isInEdit;
         // break;
       } else {
         node.isInEdit = false;
@@ -158,10 +236,10 @@ export default class Tree {
   /* 添加一个目标节点的兄弟结点 */
   addSisterNode(key, {
     nodeName = '',
-    nameEditable = '',
+    nameEditable = true,
     valueEditable = true,
     nodeDeletable = true,
-    isInEdit = true,
+    isInEdit = false,
     nodeValue = '',
   } = {}) {
     this.addOneSisterNode(this.treeData, {
@@ -222,10 +300,10 @@ export default class Tree {
   /* 添加一个目标节点的子结点 */
   addSubNode(key, {
     nodeName = '',
-    nameEditable = '',
+    nameEditable = true,
     valueEditable = true,
     nodeDeletable = true,
-    isInEdit = true,
+    isInEdit = false,
     nodeValue = '',
   } = {}) {
     if (Tree.getTreeMaxLevel(this.treeData) > this.maxLevel) {
