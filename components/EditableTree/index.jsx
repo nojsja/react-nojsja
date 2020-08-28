@@ -10,6 +10,7 @@ import './index.less';
 
 import { getRandomString, deepComparison } from '../utils';
 
+
 @inject('lang')
 @observer
 class EditableTree extends Component {
@@ -140,6 +141,8 @@ class EditableTree extends Component {
       {
         maxLevel: this.state.maxLevel,
         overLevelTips: this.props.lang.lang.template_tree_max_level_tips,
+        completeEditingNodeTips: this.props.lang.lang.pleaseCompleteTheNodeBeingEdited,
+        addSameLevelTips: this.props.lang.extendedMetadata_same_level_name_cannot_be_added,
       }
     );
     return tree;

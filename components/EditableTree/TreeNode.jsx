@@ -137,7 +137,7 @@ export default class TreeNode extends Component {
                       onChange={this.onNodeValueChange}
                       defaultValue={treeData.nodeValue}
                     />
-                  </Col>)
+                   </Col>)
                 }
                 <Col span={2}>
                   <div className="editable-tree-edit-confirm successColor">
@@ -155,29 +155,42 @@ export default class TreeNode extends Component {
               {
                 (editNameInputVisible) &&
                 (<Col span={8}>
-                  <Input
+                  {/* <Input
                     size="small"
                     className="normal-text"
                     disabled={!treeData.nameEditable}
                     onFocus={treeData.nameEditable ? this.getInToEditable : undefined}
                     defaultValue={treeData.nodeName}
-                  />
-                </Col>)
+                  /> */}
+                  <div
+                    onClick={treeData.nameEditable ? this.getInToEditable : undefined}
+                    className="editable-tree-label"
+                    title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}
+                  >{longNameFormatterNoTail(treeData.nodeName)}
+                  </div>
+                 </Col>)
               }
               {editNameInputVisible && <span>：</span>}
               {
                 editValueInputVisible &&
                   <Col span={8}>
-                    <Input
+                    {/* <Input
                       className="normal-text"
                       disabled={!treeData.valueEditable}
                       onFocus={treeData.valueEditable ? this.getInToEditable : undefined}
                       size="small"
                       defaultValue={treeData.nodeValue}
-                    />
+                    /> */}
+                    <div
+                      onClick={treeData.valueEditable ? this.getInToEditable : undefined}
+                      className="editable-tree-label"
+                      title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}
+                    >{longNameFormatterNoTail(treeData.nodeValue)}
+                    </div>
+
                   </Col>
               }
-            </React.Fragment>)
+             </React.Fragment>)
         }
         <Col
           span={5}

@@ -8,11 +8,13 @@ export default class Tree {
     maxLevel,
     overLevelTips = '已经限制模板树的最大深度为：',
     addSameLevelTips = '同层级已经有同名节点被添加！',
+    completeEditingNodeTips = '请完善当前正在编辑的节点数据！',
   }) {
     this.treeData = data;
     this.treeKey = treeKey;
     this.maxLevel = maxLevel;
     this.overLevelTips = overLevelTips;
+    this.completeEditingNodeTips = completeEditingNodeTips;
     this.addSameLevelTips = addSameLevelTips;
   }
 
@@ -71,6 +73,23 @@ export default class Tree {
     return level;
   }
 
+  /* 查询是否有节点正在编辑 */
+  static findInEdit(items) {
+    let isEdit = false;
+    if (!typeCheck(items, 'array')) return isEdit;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].isInEdit) {
+        isEdit = items[i];
+      }
+      if (!isEdit && typeCheck(items[i].nodeValue, 'array')) {
+        isEdit = Tree.findInEdit(items[i].nodeValue);
+      }
+      if (isEdit) break;
+    }
+    return isEdit;
+  }
+
   getInToEditableOne(nodeArray, {
     nodeName, nodeValue, id, key, isInEdit,
   }) {
@@ -102,22 +121,6 @@ export default class Tree {
   getInToEditable(key, {
     nodeName, nodeValue, id, isInEdit,
   } = {}) {
-    const findInEdit = (items) => {
-      let isEdit = false;
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].isInEdit && items[i].key !== key) {
-          isEdit = items[i];
-        }
-        if (typeCheck(items[i].nodeValue, 'array')) {
-          isEdit = findInEdit(items[i].nodeValue);
-        }
-        if (isEdit) break;
-      }
-      return isEdit;
-    };
-    // console.log('find in edit:', findInEdit(this.treeData));
-    // if (findInEdit(this.treeData)) return this.getTreeData();
-
     this.getInToEditableOne(this.treeData, {
       nodeName,
       nodeValue,
@@ -239,9 +242,13 @@ export default class Tree {
     nameEditable = true,
     valueEditable = true,
     nodeDeletable = true,
-    isInEdit = false,
+    isInEdit = true,
     nodeValue = '',
   } = {}) {
+    if (Tree.findInEdit(this.treeData)) {
+      openNotification('warning', null, this.completeEditingNodeTips);
+      return this.getTreeData();
+    }
     this.addOneSisterNode(this.treeData, {
       nodeName,
       nameEditable,
@@ -303,22 +310,27 @@ export default class Tree {
     nameEditable = true,
     valueEditable = true,
     nodeDeletable = true,
-    isInEdit = false,
+    isInEdit = true,
     nodeValue = '',
   } = {}) {
     if (Tree.getTreeMaxLevel(this.treeData) > this.maxLevel) {
       openNotification('warning', null, this.overLevelTips + this.maxLevel);
-    } else {
-      this.addOneSubNode(this.treeData, {
-        nodeName,
-        nameEditable,
-        valueEditable,
-        nodeDeletable,
-        isInEdit,
-        nodeValue,
-        key,
-      });
+      return this.getTreeData();
     }
+    if (Tree.findInEdit(this.treeData)) {
+      openNotification('warning', null, this.completeEditingNodeTips);
+      return this.getTreeData();
+    }
+
+    this.addOneSubNode(this.treeData, {
+      nodeName,
+      nameEditable,
+      valueEditable,
+      nodeDeletable,
+      isInEdit,
+      nodeValue,
+      key,
+    });
     return this.getTreeData();
   }
 
