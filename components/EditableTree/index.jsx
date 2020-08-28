@@ -31,6 +31,7 @@ class EditableTree extends Component {
       // 生成默认值
       TreeClass.defaultTreeValueWrapper(this.dataOrigin);
       const formattedData = this.formatTreeData(this.dataOrigin);
+      this.updateTreeModel();
       const keys = TreeClass.getTreeKeys(this.dataOrigin);
       this.setState({
         treeData: formattedData,
@@ -48,6 +49,7 @@ class EditableTree extends Component {
       // 生成默认值
       TreeClass.defaultTreeValueWrapper(this.dataOrigin);
       const formattedData = this.formatTreeData(this.dataOrigin);
+      this.updateTreeModel();
       const keys = TreeClass.getTreeKeys(this.dataOrigin);
       this.onDataChange(this.dataOrigin);
       this.setState({
@@ -135,6 +137,11 @@ class EditableTree extends Component {
     if (treeData instanceof Array) {
       tree = treeData.map(treeNode => this.formatNodeData(treeNode));
     }
+    return tree;
+  }
+
+  /* 更新TreeModel */
+  updateTreeModel = () => {
     this.treeModel = new TreeClass(
       this.dataOrigin,
       this.key,
@@ -145,7 +152,6 @@ class EditableTree extends Component {
         addSameLevelTips: this.props.lang.extendedMetadata_same_level_name_cannot_be_added,
       }
     );
-    return tree;
   }
 
   /* expand/unexpand */
