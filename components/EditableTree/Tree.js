@@ -18,6 +18,33 @@ export default class Tree {
     this.addSameLevelTips = addSameLevelTips;
   }
 
+  /* 获取key所在节点所处的层级 */
+  static getTargetLevel = (treeData, key, level = 0) => {
+    if (!treeData || !(treeData instanceof Array)) return 0;
+    level += 1;
+    for (let i = 0; i < treeData.length; i++) {
+      if (treeData[i].key === key) break;
+      if (treeData[i].nodeValue instanceof Array) level = Tree.getTargetLevel(treeData[i].nodeValue, key, level);
+    }
+
+    return level;
+  }
+
+  /* 获取用于比较的name/value裸数据 */
+  static getNudeTreeData = (dataArray) => {
+    let level;
+    for (let i = 0; i < dataArray.length; i++) {
+      level = {
+        nodeName: dataArray[i].nodeName,
+        nodeValue: typeCheck(dataArray[i].nodeValue, 'array') ?
+          Tree.getNudeTreeData(dataArray[i].nodeValue) :
+          dataArray[i].nodeValue,
+      };
+      dataArray[i] = level;
+    }
+    return dataArray;
+  }
+
   /* 编辑/添加节点的时候检测同一层级是否有同名/同value节点 */
   static checkNodeIsExitsInSameLevel = (node, nodeArray = []) => {
     let checkLable = 'nodeName';
@@ -93,8 +120,9 @@ export default class Tree {
   getInToEditableOne(nodeArray, {
     nodeName, nodeValue, id, key, isInEdit,
   }) {
+    let node;
     for (let i = 0; i < nodeArray.length; i++) {
-      const node = nodeArray[i];
+      node = nodeArray[i];
       if (node.key === key) {
         const nodeIsExitsInSameLevel =
           Tree.checkNodeIsExitsInSameLevel({
@@ -313,7 +341,7 @@ export default class Tree {
     isInEdit = true,
     nodeValue = '',
   } = {}) {
-    if (Tree.getTreeMaxLevel(this.treeData) > this.maxLevel) {
+    if ((Tree.getTargetLevel(this.treeData) + 1) > this.maxLevel) {
       openNotification('warning', null, this.overLevelTips + this.maxLevel);
       return this.getTreeData();
     }
@@ -366,3 +394,4 @@ export default class Tree {
     return JSON.parse(JSON.stringify(this.treeData));
   }
 }
+
