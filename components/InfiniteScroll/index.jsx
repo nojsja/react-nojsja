@@ -21,9 +21,9 @@ class InfiniteScroll extends Component {
   maxHeight='200px'
 
   componentDidMount() {
-    const { initialLoad, scrollTrigger } = this.props;
+    const { initialLoad = true, scrollTrigger, hasMore = true } = this.props;
     const { count } = this.state;
-    if (initialLoad && scrollTrigger) {
+    if (initialLoad && hasMore && scrollTrigger) {
       scrollTrigger(count);
       this.setState({
         count: count + 1,
@@ -39,8 +39,16 @@ class InfiniteScroll extends Component {
   /* 滚动监听 */
   onScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = this.scrollRef.current;
+    const { onScroll } = this.props;
     if (scrollTop + clientHeight === scrollHeight) {
       this.scrollToBottom();
+    }
+    if (onScroll) {
+      onScroll({
+        scrollTop,
+        clientHeight,
+        scrollHeight,
+      });
     }
   }
 

@@ -24,12 +24,12 @@ export default class TreeNode extends Component {
     this.nodeValue = nodeValue;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {
       nodeName, nodeValue,
     } = nextProps.treeData;
-    this.nodeName = nodeName;
-    this.nodeValue = nodeValue;
+    this.nodeName = this.nodeName || nodeName;
+    this.nodeValue = this.nodeValue || nodeValue;
     if (nextProps.focusKey === nextProps.treeData.key) {
       // this.editNameInputRef.current.focus();
     }
@@ -43,14 +43,14 @@ export default class TreeNode extends Component {
 
   /* 设置操作按钮显示隐藏 */
   setActionVisibleTrue = (e) => {
-    e.stopPropagation();
+    e && e.stopPropagation();
     this.setState({
       actionVisible: true,
     });
   }
 
   setActionVisibleFalse = (e) => {
-    e.stopPropagation();
+    e && e.stopPropagation();
     this.setState({
       actionVisible: false,
     });
@@ -67,14 +67,26 @@ export default class TreeNode extends Component {
   editConfirm = () => {
     const { treeData, modifyNode } = this.props;
     if (!this.nodeName && !this.nodeValue) return openNotification('warning', null, this.props.lang.lang.pleaseInputKeyOrValue);
-    modifyNode(treeData.key, {
+    const isValid = modifyNode(treeData.key, {
       ...treeData,
       nodeName: this.nodeName,
       nodeValue: this.nodeValue,
       isInEdit: false,
     });
-    this.nodeName = '';
-    this.nodeValue = '';
+    if (isValid) {
+      this.nodeName = '';
+      this.nodeValue = '';
+      this.setActionVisibleFalse();
+    }
+  }
+
+  editCancel = () => {
+    const { treeData, getInToEditable } = this.props;
+    getInToEditable(treeData.key, {
+      ...treeData,
+      isInEdit: false,
+    });
+    this.setActionVisibleFalse();
   }
 
   getInToEditable = () => {
@@ -149,6 +161,11 @@ export default class TreeNode extends Component {
                       <CheckOutlined onClick={this.editConfirm} />
                     </Tooltip>
                   </span>
+                  <span className="editable-tree-edit-cancel warningColor">
+                    <Tooltip title={lang.cancel}>
+                      <CloseOutlined onClick={this.editCancel} />
+                    </Tooltip>
+                  </span>
                 </span>
               </React.Fragment>
             )
@@ -170,7 +187,7 @@ export default class TreeNode extends Component {
                     onClick={treeData.nameEditable ? this.getInToEditable : undefined}
                     className="editable-tree-label normal-text"
                     title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}
-                  >{longNameFormatterNoTail(treeData.nodeName)}
+                  >{longNameFormatterNoTail(treeData.nodeName || '')}
                   </span>
                  </span>)
               }
@@ -189,7 +206,7 @@ export default class TreeNode extends Component {
                       onClick={treeData.valueEditable ? this.getInToEditable : undefined}
                       className="editable-tree-label normal-text"
                       title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}
-                    >{longNameFormatterNoTail(treeData.nodeValue)}
+                    >{longNameFormatterNoTail(treeData.nodeValue || '')}
                     </span>
 
                   </span>

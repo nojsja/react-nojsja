@@ -73,9 +73,12 @@ class EditableTree extends Component {
   modifyNode = (key, treeNode) => {
     const modifiedData = this.treeModel.modifyNode(key, treeNode);
     console.log('modify node: ', this.dataOrigin);
-    this.setState({
-      treeData: this.formatTreeData(modifiedData),
-    }, () => this.onDataChange(this.dataOrigin));
+    if (modifiedData) {
+      this.setState({
+        treeData: this.formatTreeData(modifiedData),
+      }, () => this.onDataChange(this.dataOrigin));
+    }
+    return modifiedData;
   }
 
   /* 进入编辑模式 */

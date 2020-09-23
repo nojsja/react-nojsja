@@ -60,6 +60,21 @@ export default class Tree {
     return !!nodeArray.find(item => (item[checkLable] === node[checkLable] && node.key !== item.key));
   }
 
+  /* 编辑/添加节点的时候检测同一层级是否有同名/同value节点 */
+  static checkNodeIsBeEditable = (key, nodeArray = []) => {
+    let isEditable = true;
+    nodeArray.forEach((nodeItem) => {
+      if (isEditable) {
+        if (nodeItem.key !== key && nodeItem.nodeName === '' && nodeItem.nodeValue === '') {
+          isEditable = false;
+        } else {
+          isEditable = typeCheck(nodeItem.nodeValue, 'array') ? Tree.checkNodeIsBeEditable(key, nodeItem.nodeValue) : true;
+        }
+      }
+    });
+    return isEditable;
+  }
+
   /* 默认值填充 */
   static defaultTreeValueWrapper(treeData) {
     if (!treeData || !(treeData instanceof Array)) return treeData;
@@ -92,17 +107,6 @@ export default class Tree {
     });
 
     return keys;
-  }
-
-  /* 检查最大层级 */
-  static getTreeMaxLevel(treeData, level = 0) {
-    if (!treeData || !(treeData instanceof Array)) return 0;
-    level += 1;
-    treeData.forEach((node) => {
-      if (node.nodeValue instanceof Array) level = Tree.getTreeMaxLevel(node.nodeValue, level);
-    });
-
-    return level;
   }
 
   /* 查询是否有节点正在编辑 */
@@ -154,13 +158,17 @@ export default class Tree {
   getInToEditable(key, {
     nodeName, nodeValue, id, isInEdit,
   } = {}) {
-    this.getInToEditableOne(this.treeData, {
-      nodeName,
-      nodeValue,
-      isInEdit,
-      key,
-      id,
-    });
+    if (Tree.checkNodeIsBeEditable(key, this.treeData)) {
+      this.getInToEditableOne(this.treeData, {
+        nodeName,
+        nodeValue,
+        isInEdit,
+        key,
+        id,
+      });
+    } else {
+      openNotification('warning', null, this.completeEditingNodeTips);
+    }
 
     return this.getTreeData();
   }
@@ -174,6 +182,7 @@ export default class Tree {
     isInEdit,
     key,
   }) {
+    let isValid = true;
     for (let i = 0; i < nodeArray.length; i++) {
       const node = nodeArray[i];
       if (node.key === key) {
@@ -183,8 +192,9 @@ export default class Tree {
           }, nodeArray);
         if (nodeIsExitsInSameLevel) {
           openNotification('warning', null, this.addSameLevelTips);
+          isValid = false;
           break;
-        };
+        }
         node.nameEditable = nameEditable;
         node.valueEditable = valueEditable;
         node.nodeName = nodeName;
@@ -196,7 +206,7 @@ export default class Tree {
         node.isInEdit = false;
       }
       if (node.nodeValue && (node.nodeValue instanceof Array)) {
-        this.modifyOneNode(node.nodeValue, {
+        isValid = this.modifyOneNode(node.nodeValue, {
           nodeName,
           nodeValue,
           nameEditable,
@@ -207,6 +217,7 @@ export default class Tree {
         });
       }
     }
+    return isValid;
   }
 
   /* 修改一个节点数据 */
@@ -218,7 +229,7 @@ export default class Tree {
     nodeDeletable = true,
     isInEdit = false,
   } = {}) {
-    this.modifyOneNode(this.treeData, {
+    const isValid = this.modifyOneNode(this.treeData, {
       nodeName,
       nodeValue,
       nameEditable,
@@ -228,7 +239,7 @@ export default class Tree {
       key,
     });
 
-    return this.getTreeData();
+    return isValid ? this.getTreeData() : null;
   }
 
   addOneSisterNode(nodeArray, {
