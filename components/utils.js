@@ -115,3 +115,28 @@ export function arrayRemove(array, item) {
     array.splice(index, 1);
   }
 }
+
+/* 判断类型 */
+export const typeCheck = (target, type) => {
+  switch (type) {
+    case 'array':
+      return Array.prototype.isPrototypeOf(target);
+    case 'object':
+      return !Array.isArray(target) && target !== null && (target || '').toString() === '[object Object]';
+    default:
+      return (typeof target) === type;
+  }
+};
+
+/**
+  * longNameFormatter [长名保留前后位数]
+  * @param  {[String]} str [字符串]
+  * @param  {[Number]} limit [超过多少位字符开始省略显示，推荐50]
+  * @return {[Number]} param [desc]
+  */
+ exports.longNameFormatterNoTail = (name, limit = 50) => {
+  if (name.length < limit) {
+    return name;
+  }
+  return `${name.slice(0, (limit))}...`;
+};

@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Spin, Tree, Input, Row, Col, Tooltip } from 'antd';
 import { observer, inject } from 'mobx-react';
 
+import TreeClass from './Tree';
+
 import { CheckOutlined } from '@ant-design/icons';
 
-import { fnDebounce } from '../utils';
+import { fnDebounce, typeCheck, longNameFormatterNoTail } from '../utils';
 
 @inject('lang')
 @observer
@@ -80,8 +82,41 @@ export default class TreeNode extends Component {
     }
   }
 
+  editYamlConfirm = () => {
+    const { treeData, addNodeFragment, addExpandedKey } = this.props;
+    if (!this.nodeValue) return openNotification('warning', null, this.props.lang.lang.pleaseInputKeyOrValue);
+    let yamlData;
+    try {
+      yamlData = parse(this.nodeValue);
+      yamlData = typeCheck(yamlData, 'array') ? yamlData.reduce((item, nowItem) => ({ ...item, ...nowItem }), {}) : yamlData;
+    } catch (error) {
+      return openNotification('warning', null, this.props.lang.lang.json_format_invalid);
+    }
+    if (!TreeClass.isNudeTemplateData(yamlData)) {
+      return openNotification('warning', null, this.props.lang.lang.json_format_invalid);
+    }
+    const fragment = TreeClass.formatFragmentData(yamlData);
+
+    const isValid = addNodeFragment(treeData.key, {
+      ...treeData,
+      fragment,
+      isInEdit: false,
+    });
+
+
+    if (isValid) {
+      addExpandedKey(TreeClass.getTreeKeys(fragment));
+      console.log('valid： ', TreeClass.getTreeKeys(fragment));
+      this.nodeName = '';
+      this.nodeValue = '';
+      this.setActionVisibleFalse();
+    }
+  }
+
   editCancel = () => {
     const { treeData, getInToEditable } = this.props;
+    if (!treeData.nodeName && !treeData.nodeValue) return openNotification('warning', null, this.props.lang.lang.KeyAndValueIsNotAllEmpty);
+
     getInToEditable(treeData.key, {
       ...treeData,
       isInEdit: false,
@@ -109,19 +144,27 @@ export default class TreeNode extends Component {
     addExpandedKey(treeData.key);
   }
 
+  addYamlNode = () => {
+    const { treeData, addSubNode, addExpandedKey } = this.props;
+    addSubNode(treeData.key, {
+      yaml: true,
+    });
+  }
+
   removeNode = () => {
     const { treeData, removeNode } = this.props;
+    console.log(treeData.key);
     removeNode(treeData.key);
   }
 
 
   render() {
-    const { treeData, focusKey } = this.props;
+    const { treeData, maxLevel } = this.props;
     const { lang } = this.props.lang;
     const editValueInputVisible = !(treeData.nodeValue instanceof Array);
     const editNameInputVisible = (!treeData.nodeName && !treeData.nodeValue) || treeData.nodeName || (treeData.nodeValue && typeCheck(treeData.nodeValue, 'array'));
     const actionAddNodeVisible = (treeData.nodeValue || treeData.nodeName) && (!treeData.nodeValue || treeData.nodeValue instanceof Array);
-
+    const depthOverflow = treeData.depth >= maxLevel;
     return (
       <Row
         key={treeData.key}
@@ -129,6 +172,31 @@ export default class TreeNode extends Component {
         onMouseLeave={this.setActionVisibleFalse}
       >
         {
+          treeData.yaml &&
+          treeData.isInEdit &&
+          <React.Fragment>
+            <span span={14}>
+              <Input.TextArea
+                autoSize={{ minRows: 2, maxRows: 4 }}
+                onChange={this.onNodeValueChange}
+              />
+            </span>
+            <span span={10}>
+              <span className="editable-tree-edit-confirm successColor">
+                <Tooltip title={lang.confirm}>
+                  <CheckOutlined onClick={this.editYamlConfirm} />
+                </Tooltip>
+              </span>
+              <span className="editable-tree-edit-cancel warningColor">
+                <Tooltip title={lang.cancel}>
+                  <CloseOutlined onClick={this.editCancel} />
+                </Tooltip>
+              </span>
+            </span>
+          </React.Fragment>
+        }
+        {
+          !treeData.yaml &&
           treeData.isInEdit &&
             (
               <React.Fragment>
@@ -153,7 +221,7 @@ export default class TreeNode extends Component {
                       onChange={this.onNodeValueChange}
                       defaultValue={treeData.nodeValue}
                     />
-                   </span>)
+                  </span>)
                 }
                 <span span={2}>
                   <span className="editable-tree-edit-confirm successColor">
@@ -175,7 +243,7 @@ export default class TreeNode extends Component {
             (<React.Fragment>
               {
                 (editNameInputVisible) &&
-                (<span span={8}>
+                (<span span={8} attr-key={treeData.key}>
                   {/* <Input
                     size="small"
                     className="normal-text"
@@ -183,13 +251,15 @@ export default class TreeNode extends Component {
                     onFocus={treeData.nameEditable ? this.getInToEditable : undefined}
                     defaultValue={treeData.nodeName}
                   /> */}
-                  <span
-                    onClick={treeData.nameEditable ? this.getInToEditable : undefined}
-                    className="editable-tree-label normal-text"
-                    title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}
-                  >{longNameFormatterNoTail(treeData.nodeName || '')}
-                  </span>
-                 </span>)
+                  <Tooltip placement="bottom" title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}>
+                    <span
+                      onClick={((treeData.valueEditable || treeData.nameEditable) && editValueInputVisible) ? this.getInToEditable : undefined}
+                      className="editable-tree-label normal-text"
+                      // title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}
+                    >{longNameFormatterNoTail(treeData.nodeName || '')}
+                    </span>
+                  </Tooltip>
+                </span>)
               }
               {editNameInputVisible && <span>：</span>}
               {
@@ -202,16 +272,17 @@ export default class TreeNode extends Component {
                       size="small"
                       defaultValue={treeData.nodeValue}
                     /> */}
-                    <span
-                      onClick={treeData.valueEditable ? this.getInToEditable : undefined}
-                      className="editable-tree-label normal-text"
-                      title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}
-                    >{longNameFormatterNoTail(treeData.nodeValue || '')}
-                    </span>
-
+                    <Tooltip placement="bottom" title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}>
+                      <span
+                        onClick={this.getInToEditable}
+                        className="editable-tree-label normal-text"
+                        // title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}
+                      >{longNameFormatterNoTail(treeData.nodeValue || '')}
+                      </span>
+                    </Tooltip>
                   </span>
               }
-             </React.Fragment>)
+            </React.Fragment>)
         }
         <span
           span={5}
@@ -220,14 +291,22 @@ export default class TreeNode extends Component {
           this.state.actionVisible ?
             <span className="editable-tree-node-action">
               {
+                !treeData.isInEdit &&
                 actionAddNodeVisible &&
                 (<Tooltip title={lang.addSisterNode}> <i className="iconfont icon-sisternode" onClick={this.addSisterNode} /></Tooltip>)
               }
               {
+                !treeData.isInEdit &&
                 actionAddNodeVisible &&
+                !depthOverflow &&
                 (<Tooltip title={lang.addSubNode}><i className="iconfont icon-subnode" onClick={this.addSubNode} /></Tooltip>)
               }
-              { treeData.nodeDeletable && <Tooltip title={lang.deleteNode}> <i className="iconfont icon-delete" onClick={this.removeNode} /> </Tooltip>}
+              {
+                !treeData.isInEdit &&
+                actionAddNodeVisible &&
+                (<Tooltip title={lang.addYamlNode}><i className="iconfont icon-node_multiple" onClick={this.addYamlNode} /></Tooltip>)
+              }
+              { treeData.nodeDeletable && <Tooltip title={lang.deleteLevel}> <i className="iconfont icon-delete" onClick={this.removeNode} /> </Tooltip>}
             </span>
           :
             <span className="editable-tree-node-action" />

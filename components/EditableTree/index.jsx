@@ -31,6 +31,7 @@ class EditableTree extends Component {
       this.dataOrigin = toJS(data);
       // 生成默认值
       TreeClass.defaultTreeValueWrapper(this.dataOrigin);
+      TreeClass.levelDepthWrapper(this.dataOrigin);
       const formattedData = this.formatTreeData(this.dataOrigin);
       this.updateTreeModel();
       const keys = TreeClass.getTreeKeys(this.dataOrigin);
@@ -55,6 +56,7 @@ class EditableTree extends Component {
         this.dataOrigin = data;
         // 生成默认值
         TreeClass.defaultTreeValueWrapper(this.dataOrigin);
+        TreeClass.levelDepthWrapper(this.dataOrigin);
         const formattedData = this.formatTreeData(this.dataOrigin);
         this.updateTreeModel();
         const keys = TreeClass.getTreeKeys(this.dataOrigin);
@@ -92,22 +94,37 @@ class EditableTree extends Component {
   /* 添加一个兄弟节点 */
   addSisterNode = (key) => {
     const modifiedData = this.treeModel.addSisterNode(key);
+    TreeClass.levelDepthWrapper(this.dataOrigin);
     this.setState({
       treeData: this.formatTreeData(modifiedData),
     }, () => this.onDataChange(this.dataOrigin));
   }
 
   /* 添加一个子结点 */
-  addSubNode = (key) => {
-    const modifiedData = this.treeModel.addSubNode(key);
+  addSubNode = (key, props) => {
+    const modifiedData = this.treeModel.addSubNode(key, props);
+    TreeClass.levelDepthWrapper(this.dataOrigin);
     this.setState({
       treeData: this.formatTreeData(modifiedData),
     }, this.onDataChange(this.dataOrigin));
   }
 
+  /* 添加一个yaml节点片段 */
+  addNodeFragment = (key, props) => {
+    const modifiedData = this.treeModel.addNodeFragment(key, props);
+    if (modifiedData) {
+      TreeClass.levelDepthWrapper(this.dataOrigin);
+      this.setState({
+        treeData: this.formatTreeData(modifiedData),
+      }, this.onDataChange(this.dataOrigin));
+    }
+    return modifiedData;
+  }
+
   /* 移除一个节点 */
   removeNode = (key) => {
     const modifiedData = this.treeModel.removeNode(key);
+    TreeClass.levelDepthWrapper(this.dataOrigin);
     this.setState({
       treeData: this.formatTreeData(modifiedData),
     }, this.onDataChange(this.dataOrigin));
@@ -116,12 +133,13 @@ class EditableTree extends Component {
   /* 生成树节点数据 */
   formatNodeData = (treeData) => {
     let tree = {};
-    const key = `${this.key}_${treeData.id}`;
+    const key = treeData.key || `${this.key}_${treeData.id}`;
     if (treeData.toString() === '[object Object]' && tree !== null) {
       tree.key = key;
       treeData.key = key;
       tree.title =
         (<TreeNode
+          maxLevel={this.maxLevel}
           setParent={this.setAttr}
           focusKey={this.state.focusKey}
           treeData={treeData}
@@ -130,6 +148,7 @@ class EditableTree extends Component {
           addExpandedKey={this.addExpandedKey}
           getInToEditable={this.getInToEditable}
           addSubNode={this.addSubNode}
+          addNodeFragment={this.addNodeFragment}
           removeNode={this.removeNode}
           setFocus={this.setFocus}
         />);
@@ -158,7 +177,7 @@ class EditableTree extends Component {
         maxLevel: this.maxLevel,
         overLevelTips: this.props.lang.lang.template_tree_max_level_tips,
         completeEditingNodeTips: this.props.lang.lang.pleaseCompleteTheNodeBeingEdited,
-        addSameLevelTips: this.props.lang.extendedMetadata_same_level_name_cannot_be_added,
+        addSameLevelTips: this.props.lang.lang.extendedMetadata_same_level_name_cannot_be_added,
       }
     );
   }
@@ -171,8 +190,9 @@ class EditableTree extends Component {
   }
 
   addExpandedKey = (key) => {
+    key = key instanceof Array ? key : [key];
     this.setState({
-      expandedKeys: [...this.state.expandedKeys, key],
+      expandedKeys: Array.from(new Set([...this.state.expandedKeys, ...key])),
     });
   }
 

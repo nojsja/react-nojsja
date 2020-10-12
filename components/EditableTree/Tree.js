@@ -18,6 +18,57 @@ export default class Tree {
     this.addSameLevelTips = addSameLevelTips;
   }
 
+  /**
+    * [判断裸数据是否符合规范]
+    * @param  {[Array]} data [自定义的扩展元数据]
+    * @return {[Boolean]} [是否符合]
+    */
+   static isNudeTemplateData = (dataObject) => {
+     let pass = true;
+     if (!typeCheck(dataObject, 'object')) {
+       pass = false;
+       return pass;
+     }
+     Object.keys(dataObject).forEach((key) => {
+       if (!pass) return pass;
+       pass = typeCheck(dataObject[key], 'object') ? Tree.isNudeTemplateData(dataObject[key]) : true;
+     });
+     return pass;
+   }
+
+  /**
+   * [formatFragmentData 转换json裸数据为Tree标准数据]
+   * @param  {[Array]} data [自定义的扩展元数据]
+   * @return {[Array]} [已经还原成额原生数据]
+   */
+  static formatFragmentData = (dataObject) => {
+    let nodeData = typeCheck(dataObject, 'object') ? dataObject : {};
+    let tmp;
+    nodeData = Object.keys(nodeData).map((key) => {
+      tmp = {};
+      tmp.nodeName = key;
+      tmp.id = `${key}_${getRandomString()}`;
+      tmp.key = tmp.id;
+      tmp.nodeValue = typeCheck(nodeData[key], 'object') ? Tree.formatFragmentData(nodeData[key]) : String(nodeData[key]);
+      return tmp;
+    });
+    return nodeData;
+  }
+
+  /* 检查树是否存在同级key相同的情况 */
+  static hasSameKeyInOneLevelForFragment = (treeData) => {
+    let hasSame = false;
+    let i;
+    if (!typeCheck(treeData, 'array')) return false;
+    if (new Set(treeData.map(item => item.nodeName)).size < treeData.length) return true;
+    for (i = 0; i < treeData.length; i++) {
+      hasSame = typeCheck(treeData[i].nodeValue, 'array') ? Tree.hasSameKeyInOneLevelForFragment(treeData[i].nodeValue) : hasSame;
+      if (hasSame) break;
+    }
+    return hasSame;
+  }
+
+  /* 获取目标深度 */
   static getTargetLevel = (treeData, key, level = 0) => {
     const nextLevels = [];
     let breaked = false;
@@ -35,12 +86,28 @@ export default class Tree {
     return level;
   }
 
+  static levelDepthWrapper = (treeData, level = 0) => {
+    const nextLevels = [];
+    if (!treeData || !(treeData instanceof Array)) return 0;
+    level += 1;
+    for (let i = 0; i < treeData.length; i++) {
+      treeData[i].depth = level;
+      nextLevels.push(...(treeData[i].nodeValue instanceof Array ? (treeData[i].nodeValue) : []));
+    }
+    if (nextLevels.length) { level = Tree.levelDepthWrapper(nextLevels, level); }
+
+    return level;
+  }
+
   /* 获取用于比较的name/value裸数据 */
   static getNudeTreeData = (dataArray) => {
     let level;
     for (let i = 0; i < dataArray.length; i++) {
       level = {
         nodeName: dataArray[i].nodeName,
+        nameEditable: dataArray[i].nameEditable,
+        valueEditable: dataArray[i].valueEditable,
+        nodeDeletable: dataArray[i].nodeDeletable,
         nodeValue: typeCheck(dataArray[i].nodeValue, 'array') ?
           Tree.getNudeTreeData(dataArray[i].nodeValue) :
           dataArray[i].nodeValue,
@@ -316,6 +383,7 @@ export default class Tree {
     isInEdit,
     nodeValue,
     key,
+    yaml,
   }) {
     let node;
     let id;
@@ -334,6 +402,7 @@ export default class Tree {
           isInEdit,
           nodeValue,
           key: `${this.treeKey}_${id}`,
+          yaml,
         });
         break;
       }
@@ -346,6 +415,7 @@ export default class Tree {
           isInEdit,
           nodeValue,
           key,
+          yaml,
         });
       }
     }
@@ -359,6 +429,7 @@ export default class Tree {
     nodeDeletable = true,
     isInEdit = true,
     nodeValue = '',
+    yaml = false,
   } = {}) {
     const level = Tree.getTargetLevel(this.treeData, key);
     if ((level + 1) > this.maxLevel) {
@@ -378,8 +449,83 @@ export default class Tree {
       isInEdit,
       nodeValue,
       key,
+      yaml,
     });
     return this.getTreeData();
+  }
+
+  addOneNodeFragment(nodeArray, {
+    nameEditable,
+    valueEditable,
+    nodeDeletable,
+    isInEdit,
+    fragment,
+    key,
+  }) {
+    let node;
+    let isValid = false;
+    let targetLevelKeys;
+    for (let i = nodeArray.length - 1; i >= 0; i--) {
+      node = nodeArray[i];
+      if (node.key === key) {
+        targetLevelKeys = nodeArray.map(item => item.nodeName);
+        if (fragment.some(item => targetLevelKeys.includes(item.nodeName))) {
+          openNotification('warning', null, this.addSameLevelTips);
+          isValid = false;
+          break;
+        }
+        isValid = true;
+        nodeArray.splice(i, 1);
+        nodeArray.push(...fragment);
+        break;
+      }
+      if (node.nodeValue && node.nodeValue instanceof Array && !isValid) {
+        isValid = this.addOneNodeFragment(node.nodeValue, {
+          nameEditable,
+          valueEditable,
+          nodeDeletable,
+          isInEdit,
+          fragment,
+          key,
+        });
+      }
+    }
+    return isValid;
+  }
+
+  /* 添加一个节点片段 */
+  addNodeFragment(key, {
+    nameEditable = true,
+    valueEditable = true,
+    nodeDeletable = true,
+    isInEdit = true,
+    fragment = {
+      nodeName: '',
+      nodeValue: '',
+      id: '',
+    },
+  } = {}) {
+    if (Tree.hasSameKeyInOneLevelForFragment(fragment)) {
+      openNotification('warning', null, this.addSameLevelTips);
+      return null;
+    }
+    fragment = Tree.defaultTreeValueWrapper(fragment);
+    const level = Tree.getTargetLevel(this.treeData, key);
+    const fragmentLevel = Tree.getTargetLevel(fragment, '');
+    if ((level + fragmentLevel) > this.maxLevel) {
+      openNotification('warning', null, this.overLevelTips + this.maxLevel);
+      return null;
+    }
+
+    const isValid = this.addOneNodeFragment(this.treeData, {
+      nameEditable,
+      valueEditable,
+      nodeDeletable,
+      isInEdit,
+      fragment,
+      key,
+    });
+    return isValid ? this.getTreeData() : null;
   }
 
   /* 移除节点递归 */
