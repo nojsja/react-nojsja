@@ -1,14 +1,15 @@
 /**
 * @name: ProgressBar
 * @description: 进度条公共组件
-* @author: 杨伟(yang.wei@datatom.com)
+* @author: nojsja
 */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { Icon } from 'semantic-ui-react';
 
 // style
-import './index.scss';
+import './index.less';
 
 /* -----------------------------------------------------------------------------
   说明:

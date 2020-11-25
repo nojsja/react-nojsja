@@ -4,16 +4,18 @@
 * @author: 杨伟(yang.wei@datatom.com)
 */
 
-import React, { PropTypes, Component } from 'react';
-import './index.scss';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
+import './index.less';
 
 /* -----------------------------------------------------------------------------
   模态弹窗公用组件：
-  弹窗的内容需要放在Model标签内，触发弹窗的元素需要被作为trigger属性传入，弹窗时显示的文字标题
-  需要作为属性label传入，使用例子如下：
+  弹窗的内容需要放在Model标签内，触发弹窗的元素需要被作为trigger属性传入，也可以直接指定show属性改变弹窗显示和隐藏，
+  弹窗时显示的文字标题需要作为属性label传入，使用例子如下：
 
   <Modal
     label={'自定义模态窗'}
+    show={false}
     trigger={
       <span>触发元素</span>
     }
@@ -79,9 +81,11 @@ export default class Model extends Component {
   }
 
   render() {
-    const { label, trigger } = this.props;
+    const {
+      label, trigger, show,
+    } = this.props;
     const { isAvailable } = this.state;
-    const modalStyle = isAvailable ? {display: 'block'} : {display: 'none'};
+    const modalStyle = (show === undefined ? isAvailable: show) ? { display: 'block' } : { display: 'none' };
 
     return (
       <span>
@@ -101,7 +105,7 @@ export default class Model extends Component {
             <span
               className='modal-button'
               onClick={this.handleClose}
-            >x 关闭</span>
+            >X</span>
 
             <div className='modal-body'>
               { this.props.children }

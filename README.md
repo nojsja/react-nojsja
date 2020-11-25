@@ -2,36 +2,46 @@
 ----------------
 >react code of mine.
 
+### commands
+
+* 【npm run build-dll】 -- dll the static library with webpack.
+* 【npm run start】 -- start webpack-dev-server.
+* 【npm run build】 -- compile and package the frontend resources.
+
 ### Contents  
 
-1. components - react组件
-2. snippets - 代码片段
-3. documents - 文档相关
+1. components - react component
+2. snippets - code snippets
+3. documents - doc
 
 ### components
+>For easy viewing, components dir is placed in the root dir.
 
-AudioPreview - HTML5音频播放组件  
-ModalWindow - 可自定义内容的模态弹窗组件  
-ProgressBar - 可自定义样式的进度条组件  
-RightClickMenu - 右键菜单组件  
-SourceTree - 资源列表树形展示组件  
-CheckedTable - 基于Antd的复杂多选表格组件
+- AudioPreview - HTML5 audio player  
+- CheckedTable - A multi-selection table component based on Antd.
+- EditableTree - A editable tree component based on Antd.
+- InfiniteScroll - A wrapper component support infinite scroll based on Antd.
+- ModalWindow - A simple modal window component  
+- ProgressBar - A progressbar component.  
+- RightClickMenu - A right-click view component based on semantic.  
+- SourceTree - A configurable and checkable tree component based on semantic.
 
 ### snippets
+some snippets of js/html/css.
 
-#### js代码段
+Js
 
-bufferToUrl - 媒体二进制数据转换为可预览文件  
-filter - filter用法  
+- bufferToUrl - Convert media binary data into previewable files  
 
-#### css代码段
+Css
 
-scrollbar-define - 自定义浏览器滚动条(webkit)  
-scrollbar-hidden - 隐藏滚动条(兼容)  
-text-overflow - 文字溢出显示省略号  
+- scrollbar-define - Customized browser scrollbar(webkit)  
+- scrollbar-hidden - Style to hide scrollbar(兼容)  
+- text-overflow - Style for text-overflow  
 
-#### scss代码段
-
-1. public - 常用工具
+Less
+- public - Snippets
 
 ### documents
+
+- react-test - A document for automated testing

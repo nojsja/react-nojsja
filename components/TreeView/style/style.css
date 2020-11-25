@@ -1,5 +1,3 @@
-@import "../../css/public.scss";
-
 /*  EaglesIndexTree
 ============================================================================= */
 .eagles-index-tree {
@@ -13,7 +11,7 @@
 }
 
 .List-Icon {
-
+  cursor: pointer;
 }
 
 .List-Header {
@@ -23,7 +21,6 @@
   border-radius: 5px;
   padding-left: 2px;
   top: -5px;
-  // overflow-x: hidden !important;
 
   transition: all 0.2s;
   font-weight: normal !important;
