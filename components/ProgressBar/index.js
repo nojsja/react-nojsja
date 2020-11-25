@@ -1,7 +1,7 @@
 /**
 * @name: ProgressBar
 * @description: 进度条公共组件
-* @author: 杨伟(yang.wei@datatom.com)
+* @author: nojsja
 */
 
 import React, { PropTypes, Component } from 'react';
