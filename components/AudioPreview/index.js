@@ -70,9 +70,8 @@ export default class AudioPlayer extends Component {
 
     // 绑定播放进度事件
     this.refs.audioDom.ontimeupdate = () => {
-      throttler(  // 每隔2秒更新一次，更新频繁了会卡顿
-        updateProgress, 2000, false, null
-      );
+      // update each second
+      throttler(updateProgress, 1e3, false, null);
     }
 
     // 更新播放时间
