@@ -107,6 +107,42 @@ export function deepComparison(data1, data2) {
   };
 }
 
+/**  [节流函数]
+   * @param  {Function} fn         [回调函数]
+   * @param  {[Time]}   delayTime  [延迟时间(ms)]
+   * @param  {Boolean}  isImediate [是否需要立即调用]
+   * @param  {[type]}   args       [回调函数传入参数]
+  */
+ export function fnThrottle() {
+  const fnObject = {};
+  let timer;
+
+  return (fn, delayTime, isImediate, args) => {
+    // 设置定时器方法
+    const setTimer = () => {
+      timer = setTimeout(() => {
+        fn(args);
+        // 清除定时器
+        clearTimeout(timer);
+        delete (fnObject[fn]);
+      }, delayTime);
+
+      fnObject[fn] = {
+        delayTime,
+        timer,
+      };
+    };
+
+    // 立即调用
+    if (!delayTime || isImediate) return fn(args);
+
+    // 判断函数是否已经在调用中
+    if (fnObject[fn]) return;
+    // 定时器
+    setTimer(fn, delayTime, args);
+  };
+}
+
 export function arrayRemove(array, item) {
   if (!array || !item) return;
 
@@ -140,3 +176,20 @@ export const typeCheck = (target, type) => {
   }
   return `${name.slice(0, (limit))}...`;
 };
+
+/**
+  * secondsToTime [seconds -> time]
+  * @author nojsja
+  * @param  {[Number]} seconds [seconds]
+  * @return {[String]} [hh:mm:ss]
+  */
+export function secondsToTime(seconds) {
+  let h = Math.floor(seconds / 3600);
+  h = h < 10 ? `0${h}` : h;
+  let m = Math.floor((seconds / 60 % 60));
+  m = m < 10 ? `0${m}` : m;
+  let s = Math.floor((seconds % 60));
+  s = s < 10 ? `0${s}` : s;
+
+  return `${h}:${m}:${s}`;
+}

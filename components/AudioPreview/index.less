@@ -1,4 +1,4 @@
-@import "../../css/public.scss";
+@import '../../snippets/less/public.less';
 
 .audio-preview-wrapper {
   width: 80%;
@@ -18,10 +18,10 @@
       padding: 3rem;
 
       background-color: #fefefe;
-      @include boxShadowRound(5px, #b1d4f0);
+      .boxShadowRound(5px, #b1d4f0);
 
       &:hover {
-        @include rotateAnimationDelay(2s, 1, 360deg);
+        .rotateAnimationDelay(2s, 1, 360deg);
       }
 
       > i {
@@ -46,6 +46,8 @@
       text-align: center;
       margin: 1rem auto;
 
+      cursor: pointer;
+
       > span {
         font-size: 1.3rem;
 
@@ -65,6 +67,10 @@
         top: 0;
 
         font-size: 1rem;
+
+        > input {
+          cursor: pointer;
+        }
       }
 
       // 覆盖默认样式
@@ -77,7 +83,7 @@
       input[type=range]::-webkit-slider-runnable-track {
         height: 7px;
         border-radius: 5px; /*将轨道设为圆角的*/
-        @include boxShadowInner(3px, grey);
+        .boxShadowInner(3px, grey);
       }
 
       input[type=range]:focus {

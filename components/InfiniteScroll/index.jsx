@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Spin } from 'antd';
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 import PropTypes from 'prop-types';
 
@@ -10,8 +10,7 @@ import { fnDebounce } from '../utils';
 import './index.less';
 
 const fnDebounceObject = fnDebounce();
-
-@inject('lang')
+@observer
 class InfiniteScroll extends Component {
   state = {
     count: 0,
