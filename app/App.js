@@ -3,7 +3,9 @@ import { Route, Router } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 
 import { createHashHistory } from 'history';
+
 import PublicState from './stores/Public';
+import DemoState from './stores/Demo';
 
 import HomePage from './views/HomePage';
 
@@ -12,6 +14,7 @@ export const history = createHashHistory();
 
 const stores = {
   pub: new PublicState(),
+  demo: new DemoState(),
 };
 
 function App() {

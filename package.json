@@ -1,13 +1,13 @@
 {
-  "name": "EditableTree",
-  "description": "a editable tree component based on Antd and powered by react.",
-  "version": "v1.0.0",
+  "name": "react-nojsja",
+  "description": "react public components of mine.",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/nojsja/react-nojsja.git"
   },
   "author": {
-    "name": "NoJsJa",
+    "name": "nojsja",
     "email": "yangwei020154@gmail.com"
   },
   "scripts": {
@@ -39,6 +39,8 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "webpack-dev-server": "^3.11.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.1",
     "yaml": "^1.10.0"
   },
   "devDependencies": {

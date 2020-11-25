@@ -134,7 +134,7 @@ export const typeCheck = (target, type) => {
   * @param  {[Number]} limit [超过多少位字符开始省略显示，推荐50]
   * @return {[Number]} param [desc]
   */
- exports.longNameFormatterNoTail = (name, limit = 50) => {
+ export const longNameFormatterNoTail = (name, limit = 50) => {
   if (name.length < limit) {
     return name;
   }

@@ -2,11 +2,6 @@
 --------------
 A editable tree component based on antd tree and power by react.
 
-#### commands
-* 【npm run build-dll】 -- dll the static library with webpack.
-* 【npm run start】 -- start webpack-dev-server.
-* 【npm run build】 -- compile and package the frontend resources.
-
 #### Usage
 ```js
 import EdiableTree from 'EditableTree/index.jsx';

@@ -1,4 +1,4 @@
-@import "../../css/public.scss";
+@import '../../snippets/less/public.less';
 
 /*  进度条组件
 ============================================================================= */
@@ -13,6 +13,7 @@
 
   background-color: white;
   text-align: left;
+  cursor: pointer;
 
   > div.bar {  // 进度条
     position: relative;
@@ -29,7 +30,7 @@
 
       display: inline-block;
       box-sizing: border-box;
-      @include boxShadowRound(1px, grey);
+      .boxShadowRound(1px, grey);
       width: 0.5rem;
       height: 100%;
 

@@ -6,6 +6,7 @@ import './app/styles/public.css';
 import './app/styles/public.less';
 import './app/styles/font/iconfont.css';
 import 'antd/dist/antd.css';
+import 'semantic-ui-css/semantic.min.css';
 
 import App from './app/App';
 
