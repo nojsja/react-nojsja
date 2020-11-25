@@ -1,4 +1,5 @@
-@import '../../css/public';
+@import '../../snippets/less/public.less';
+
 /* ============================================================================
   自定义模态窗 -- 显示添加标签和其它
 ============================================================================= */
@@ -72,14 +73,13 @@
       text-align: center;
     }
     .modal-button:hover {
-      color: $blue_dark;
+      color: @blue_dark;
       cursor: pointer;
     }
     .modal-body {
       // max-height: 480px;
       min-height: 200px;
       overflow: scroll;
-      // @include boxShadowInner(3px, grey);
 
       // background-color: #f4f5f5;
     }

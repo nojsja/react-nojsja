@@ -39,7 +39,7 @@ Css
 - scrollbar-hidden - Style to hide scrollbar(兼容)  
 - text-overflow - Style for text-overflow  
 
-Scss
+Less
 - public - Snippets
 
 ### documents

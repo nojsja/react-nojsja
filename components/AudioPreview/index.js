@@ -1,18 +1,21 @@
 /**
 * @name: AudioPlayer
-* @description: 音频播放器公共组件
-* @author: 杨伟(yang.wei@datatom.com)
+* @description: audio player
+* @author: nojsja
 */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { Icon } from 'semantic-ui-react';
 
 // components
 import ProgressBar from 'components/ProgressBar/';
 // style
-import './index.scss';
+import './index.less';
 // libs
-import { fnDelay, secondsToTime } from 'lib/Util';
+import { fnThrottle, secondsToTime } from 'utils/utils';
+
+const throttler = fnThrottle();
 
 /* -----------------------------------------------------------------------------
   说明:
@@ -67,8 +70,8 @@ export default class AudioPlayer extends Component {
 
     // 绑定播放进度事件
     this.refs.audioDom.ontimeupdate = () => {
-      fnDelay(  // 每隔2秒更新一次，更新频繁了会卡顿
-        updateProgress, 2000
+      throttler(  // 每隔2秒更新一次，更新频繁了会卡顿
+        updateProgress, 2000, false, null
       );
     }
 

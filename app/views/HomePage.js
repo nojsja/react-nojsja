@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Divider } from 'antd';
+import { Divider, Button } from 'antd';
 import { inject, observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 
 import EditableTree from 'components/EditableTree/index.jsx';
-import SourceTree from 'components/TreeView/index';
+import SourceTree from 'components/TreeView';
+import AudioPreview from 'components/AudioPreview';
+import InfiniteScroll from 'components/InfiniteScroll/index.jsx';
+import ModalWindow from 'components/ModalWindow';
 
 import { history } from '../App';
 
@@ -28,28 +31,76 @@ class HomePage extends Component {
   }
 
   render() {
-    const { match, demo } = this.props;
-    const { editableTree, sourceTree } = demo;
+    const { match, demo, pub } = this.props;
+    const {
+      editableTree,
+      sourceTree,
+      audioPlayer,
+      infiniteScroll,
+    } = demo;
 
     return (
       <div className="container-router">
-        <Divider className="divider-nojsja" orientation="left">EditableTree(antd)</Divider>
-        <EditableTree
-          data={editableTree.treeData}
-          maxLevel={10}
-          pub={this.props.pub}
-          onDataChange={this.onDataChange}
-        />
-        <Divider className="divider-nojsja" orientation="left">TreeView(semantic)</Divider>
-        <SourceTree
-          setActiveItem={console.log}
-          baseIcon={null}
-          baseColor={null}
-          checkable={true}
-          singleChecked={true}
-          treeData={sourceTree.treeData}
-          getChecked={console.log}
-        />
+        {/* EditableTree */}
+        <Divider className="divider-nojsja" orientation="right">EditableTree(antd)</Divider>
+        <div className="content-wrapper">
+          <EditableTree
+            data={editableTree.treeData}
+            maxLevel={10}
+            pub={pub}
+            onDataChange={this.onDataChange}
+          />
+        </div>
+        {/* TreeView */}
+        <Divider className="divider-nojsja" orientation="right">TreeView(semantic)</Divider>
+        <div className="content-wrapper">
+          <SourceTree
+            setActiveItem={console.log}
+            baseIcon={null}
+            baseColor={null}
+            checkable={true}
+            singleChecked={true}
+            treeData={sourceTree.treeData}
+            getChecked={console.log}
+          />
+        </div>
+        {/* AudioPreview */}
+        <Divider className="divider-nojsja" orientation="right">AudioPreview(semantic)</Divider>
+        <div className="content-wrapper">
+          <AudioPreview
+            dataUrl={audioPlayer.src}
+          />
+        </div>
+        {/* InfiniteScroll */}
+        <Divider className="divider-nojsja" orientation="right">InfiniteScroll</Divider>
+        <div className="content-wrapper">
+          <InfiniteScroll
+            lang={pub.lang} // [*] lang injection
+            scrollTrigger={demo.infiniteScroll_loadMore} // [*] function will be called when scroll to bottom
+            initialLoad // auto call scrollTrigger when dom mounted
+            loading={infiniteScroll.loading} // loading indicator
+            onScroll={console.log} // function will be called when user scroll on the component
+            hasMore={infiniteScroll.hasMore} // [*] Set this attr to let component know when to stop call scrollTrigger
+            minHeight="50px" // min height of content
+            maxHeight="200px" // max height of content 
+          >
+            {
+              infiniteScroll.data.map((item) => <p>{item}</p>)
+            }
+          </InfiniteScroll>
+        </div>
+        {/* ModalWindow */}
+        {/* <Divider className="divider-nojsja" orientation="right">ModalWindow</Divider>
+        <div className="content-wrapper">
+          <ModalWindow
+            trigger={
+              <Button>trigger</Button>
+            }
+            label={'Modal Window'}
+          >
+            <p>Modal Window Content</p>
+          </ModalWindow>
+        </div> */}
       </div>
     );
   }

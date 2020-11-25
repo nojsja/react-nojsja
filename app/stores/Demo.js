@@ -79,5 +79,28 @@ class Demo {
       }
     ]
   }
+
+  @observable audioPlayer = {
+    src: 'http://nojsja.gitee.io/static-resources/audio/life-signal.mp3',
+  }
+
+  @observable infiniteScroll = {
+    hasMore: true,
+    max: 60,
+    data: new Array(10).fill('item'),
+    loading: false,
+  }
+
+  @action infiniteScroll_loadMore = () => {
+    this.infiniteScroll.loading = true;
+    setTimeout(() => {
+      this.infiniteScroll.loading = false;
+      this.infiniteScroll.data.push('----- loading point -----', ...new Array(9).fill('item'));
+      if (this.infiniteScroll.data.length >= this.infiniteScroll.max) {
+        this.infiniteScroll.hasMore = false;
+        this.infiniteScroll.data.push('----- bottom -----');
+      }
+    }, 1.5e3);
+  }
 }
 export default Demo;
