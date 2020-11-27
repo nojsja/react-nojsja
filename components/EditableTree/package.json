@@ -1,0 +1,42 @@
+{
+  "name": "editable-tree-antd",
+  "version": "1.0.0",
+  "description": "A editable treeview component based on antd and powered by react.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "",
+    "clean": "rm lib/* -rf",
+    "compile": "npm run clean && babel src --out-dir lib && cp ./src/styles/icon-font ./lib/styles/ -rf"
+  },
+  "keywords": [
+    "tree",
+    "antd",
+    "editable"
+  ],
+  "author": "nojsja",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.7",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-decorators": "^7.7.4",
+    "@babel/plugin-proposal-export-namespace-from": "^7.12.1",
+    "@babel/plugin-proposal-function-sent": "^7.12.1",
+    "@babel/plugin-proposal-numeric-separator": "^7.12.7",
+    "@babel/plugin-proposal-throw-expressions": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "@babel/preset-stage-2": "^7.8.3",
+    "babel-plugin-css-modules-transform": "^1.6.2"
+  },
+  "dependencies": {
+    "antd": "^4.6.3",
+    "@ant-design/icons": "^4.0.2",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "prop-types": "^15.6.2",
+    "semantic-ui-css": "^2.2.12",
+    "semantic-ui-react": "^0.68.5",
+    "yaml": "^1.10.0"
+  }
+}

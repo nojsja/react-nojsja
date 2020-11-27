@@ -14,7 +14,9 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
+    extensions: [".js", ".jsx", ".es6"],
     alias: {
+      react: path.resolve('node_modules/react'),
       resources: path.resolve(__dirname, 'resources'),
       utils: path.resolve(__dirname, 'app/utils'),
       components: path.resolve(__dirname, 'components'),
