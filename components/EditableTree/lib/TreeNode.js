@@ -267,8 +267,8 @@ var TreeNode = /*#__PURE__*/function (_Component) {
       this.nodeValue = nodeValue;
     }
   }, {
-    key: "UNSAFE_componentWillReceiveProps",
-    value: function UNSAFE_componentWillReceiveProps(nextProps) {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(nextProps) {
       var _nextProps$treeData = nextProps.treeData,
           nodeName = _nextProps$treeData.nodeName,
           nodeValue = _nextProps$treeData.nodeValue;
