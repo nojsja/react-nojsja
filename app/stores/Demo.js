@@ -7,29 +7,24 @@ class Demo {
       {
         nodeName: 'publisher',
         id: 'publisher',
-        nameEditable: true,
-        valueEditable: true,
+        nameEditable: true, // default true
+        valueEditable: true, // default true
         nodeValue: [
           {
             nodeName: 'publisher description',
-            isInEdit: true,
-            nameEditable: true,
-            valueEditable: true,
+            isInEdit: true, // default false
             id: 'publisher description',
             nodeValue: [
               {
                 nodeName: 'publisher name',
                 id: 'publisher name',
-                nameEditable: true,
-                valueEditable: true,
                 nodeValue: 'publisherA',
               },
               {
                 nodeName: 'publisher place',
                 id: 'publisher place',
-                nameEditable: true,
-                valueEditable: true,
-                nodeValue: 'publisher placeB1',
+                nodeDeletable: false,
+                nodeValue: 'the node can not be deleted!',
               },
             ],
           }
@@ -38,9 +33,8 @@ class Demo {
       {
         nodeName: 'publisherB',
         id: 'publisherB',
-        nameEditable: true,
-        valueEditable: false,
-        nodeValue: 'disabled',
+        valueEditable: false, // default true
+        nodeValue: 'the value can not be edited!',
       }
     ]
   }

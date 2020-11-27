@@ -47,7 +47,8 @@ class HomePage extends Component {
           <EditableTree
             data={editableTree.treeData}
             maxLevel={10}
-            pub={pub}
+            enableYaml={true}
+            lang="en_US"
             onDataChange={this.onDataChange}
           />
         </div>

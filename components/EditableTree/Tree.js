@@ -1,8 +1,6 @@
 import { getRandomString, typeCheck } from 'utils/utils';
 import { message } from 'antd';
 
-// @inject('lang')
-// @observer
 export default class Tree {
   constructor(data, treeKey, {
     maxLevel,
@@ -19,9 +17,9 @@ export default class Tree {
   }
 
   /**
-    * [判断裸数据是否符合规范]
-    * @param  {[Array]} data [自定义的扩展元数据]
-    * @return {[Boolean]} [是否符合]
+    * [check if data is valid nude data ]
+    * @param  {[Array]} data [data object]
+    * @return {[Boolean]} [valid]
     */
    static isNudeTemplateData = (dataObject) => {
      let pass = true;
@@ -37,9 +35,9 @@ export default class Tree {
    }
 
   /**
-   * [formatFragmentData 转换json裸数据为Tree标准数据]
-   * @param  {[Array]} data [自定义的扩展元数据]
-   * @return {[Array]} [已经还原成额原生数据]
+   * [formatFragmentData transform json data to tree nodes]
+   * @param  {[Array]} data [json]
+   * @return {[Array]} [valid tree nodes data]
    */
   static formatFragmentData = (dataObject) => {
     let nodeData = typeCheck(dataObject, 'object') ? dataObject : {};
@@ -55,7 +53,7 @@ export default class Tree {
     return nodeData;
   }
 
-  /* 检查树是否存在同级key相同的情况 */
+  /* Check whether the tree has the same key at the same level */
   static hasSameKeyInOneLevelForFragment = (treeData) => {
     let hasSame = false;
     let i;
@@ -68,7 +66,7 @@ export default class Tree {
     return hasSame;
   }
 
-  /* 获取目标深度 */
+  /* get depth of this node */
   static getTargetLevel = (treeData, key, level = 0) => {
     const nextLevels = [];
     let breaked = false;
@@ -86,6 +84,7 @@ export default class Tree {
     return level;
   }
 
+  /* level wrapper */
   static levelDepthWrapper = (treeData, level = 0) => {
     const nextLevels = [];
     if (!treeData || !(treeData instanceof Array)) return 0;
@@ -99,7 +98,7 @@ export default class Tree {
     return level;
   }
 
-  /* 获取用于比较的name/value裸数据 */
+  /* get nude data */
   static getNudeTreeData = (dataArray) => {
     let level;
     for (let i = 0; i < dataArray.length; i++) {
@@ -117,7 +116,7 @@ export default class Tree {
     return dataArray;
   }
 
-  /* 编辑/添加节点的时候检测同一层级是否有同名/同value节点 */
+  /* check whether there are nodes with the same name/same value at the same level */
   static checkNodeIsExitsInSameLevel = (node, nodeArray = []) => {
     let checkLable = 'nodeName';
     if (!node.nodeName && !node.nodeValue) return false;
@@ -127,7 +126,7 @@ export default class Tree {
     return !!nodeArray.find(item => (item[checkLable] === node[checkLable] && node.key !== item.key));
   }
 
-  /* 编辑/添加节点的时候检测同一层级是否有同名/同value节点 */
+  /* check if the node is editable */
   static checkNodeIsBeEditable = (key, nodeArray = []) => {
     let isEditable = true;
     nodeArray.forEach((nodeItem) => {
@@ -142,7 +141,7 @@ export default class Tree {
     return isEditable;
   }
 
-  /* 默认值填充 */
+  /* fill default value */
   static defaultTreeValueWrapper(treeData) {
     if (!treeData || !(treeData instanceof Array)) return treeData;
     let emptyData;
@@ -165,7 +164,7 @@ export default class Tree {
     return treeData;
   }
 
-  /* 获取各个层级的key */
+  /* get whole tree nodes keys */
   static getTreeKeys(treeData, keys = []) {
     if (!treeData || !(treeData instanceof Array)) return keys;
     treeData.forEach((node) => {
@@ -176,7 +175,7 @@ export default class Tree {
     return keys;
   }
 
-  /* 查询是否有节点正在编辑 */
+  /* find whether there is a node being edited */
   static findInEdit(items) {
     let isEdit = false;
     if (!typeCheck(items, 'array')) return isEdit;
@@ -227,7 +226,7 @@ export default class Tree {
     }
   }
 
-  /* 进入编辑模式 */
+  /* enter edit mode */
   getInToEditable(key, {
     nodeName, nodeValue, id, isInEdit,
   } = {}) {
@@ -293,7 +292,7 @@ export default class Tree {
     return isValid;
   }
 
-  /* 修改一个节点数据 */
+  /* modify node data */
   modifyNode(key, {
     nodeName = '',
     nodeValue = '',
@@ -356,7 +355,7 @@ export default class Tree {
     }
   }
 
-  /* 添加一个目标节点的兄弟结点 */
+  /* add a sister node for key level */
   addSisterNode(key, {
     nodeName = '',
     nameEditable = true,
@@ -427,7 +426,7 @@ export default class Tree {
     }
   }
 
-  /* 添加一个目标节点的子结点 */
+  /* add a sub node for key level */
   addSubNode(key, {
     nodeName = '',
     nameEditable = true,
@@ -499,7 +498,7 @@ export default class Tree {
     return isValid;
   }
 
-  /* 添加一个节点片段 */
+  /* add a node fragment */
   addNodeFragment(key, {
     nameEditable = true,
     valueEditable = true,
@@ -534,7 +533,6 @@ export default class Tree {
     return isValid ? this.getTreeData() : null;
   }
 
-  /* 移除节点递归 */
   removeOneNode(key, nodeArray) {
     let node;
     let j;
@@ -556,12 +554,13 @@ export default class Tree {
     }
   }
 
-  /* 移除节点 */
+  /* remote a node */
   removeNode(key) {
     this.removeOneNode(key, this.treeData);
     return this.getTreeData();
   }
 
+  /* get tree data */
   getTreeData() {
     return JSON.parse(JSON.stringify(this.treeData));
   }
