@@ -5,6 +5,7 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     'react-hot-loader/patch',
+    'webpack/hot/only-dev-server',
     './index.js',
   ],
   mode: 'development',
@@ -94,7 +95,7 @@ module.exports = {
     host: 'localhost',
     port: 3000,
     compress: true,
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: '.',
     historyApiFallback: true,
     hot: true,
   }

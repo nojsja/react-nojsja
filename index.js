@@ -5,9 +5,11 @@ import { render } from 'react-dom';
 import './app/styles/public.css';
 import './app/styles/public.less';
 
-import './app/styles/font/iconfont.css';
 import 'antd/dist/antd.css';
-import './components/EditableTree/lib/styles/editable-tree.css';
+import 'editable-tree-antd/lib/styles/editable-tree.css';
+import 'editable-tree-antd/lib/styles/icon-font/iconfont.css';
+
+// import './app/styles/font/iconfont.css';
 import 'semantic-ui-css/semantic.min.css';
 
 import App from './app/App';

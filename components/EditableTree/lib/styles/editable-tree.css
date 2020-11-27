@@ -1,35 +1,51 @@
 /*  imported from editable-tree.css  */
 
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-confirm___3pFWy {
-      text-align: center;
-      padding-left: 5px;
-    }
-  
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-cancel___247Fr {
-      padding-left: 5px;
-    }
-    
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-name___1Ul2r { }
+.editable-tree__disabledColor___1rgen {
+  color: #e0e1e6;
+}
 
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__ant-input___cwTY-.editable-tree__normal-text___1RocU {
-      width: 150px;
-    }
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-node-action___3i3D7 {
-      padding-left: 4px;
-      display: inline-block;
-      text-align: left;
-      max-height: 24px;
-      min-width: 100px;
-    }
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-node-action___3i3D7 i {
-      margin: 0 4px;
-    }
-    
-    .editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-label___K_bHL {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      height: 19px;
-    }
+.editable-tree__successColor___18EMV {
+  color: #52c41a;
+}
+
+.editable-tree__warningColor___2NdDY {
+  color: #faad14;
+}
+
+.editable-tree__dangerColor___oArDg {
+  color: #f5222d;
+}
+
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-confirm___3pFWy {
+  text-align: center;
+  padding-left: 5px;
+}
+
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-cancel___247Fr {
+  padding-left: 5px;
+}
+
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-edit-name___1Ul2r { }
+
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__ant-input___cwTY-.editable-tree__normal-text___1RocU {
+  width: 150px;
+}
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-node-action___3i3D7 {
+  padding-left: 4px;
+  display: inline-block;
+  text-align: left;
+  max-height: 24px;
+  min-width: 100px;
+}
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-node-action___3i3D7 i {
+  margin: 0 4px;
+}
+
+.editable-tree__editable-tree-wrapper___10QRK .editable-tree__editable-tree-label___K_bHL {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 19px;
+}

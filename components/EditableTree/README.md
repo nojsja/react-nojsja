@@ -3,7 +3,7 @@
 A editable tree component based on antd tree and powered by react.
 
 #### Preview
-![EditableTree](resources/EditableTree.png)
+![EditableTree](https://raw.githubusercontent.com/nojsja/react-nojsja/master/components/EditableTree/resources/EditableTree.png)
 
 #### Env
 Working with `React^16.13.0` and `Antd^4.6.3`, please confirm to install them first.

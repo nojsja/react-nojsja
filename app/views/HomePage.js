@@ -3,7 +3,8 @@ import { Divider, Button } from 'antd';
 import { inject, observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 
-import EditableTree from 'components/EditableTree/lib';
+import EditableTree from 'editable-tree-antd';
+// import EditableTree from 'components/EditableTree/src';
 import SourceTree from 'components/TreeView';
 import AudioPreview from 'components/AudioPreview';
 import InfiniteScroll from 'components/InfiniteScroll/index';
