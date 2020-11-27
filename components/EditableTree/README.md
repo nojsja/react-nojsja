@@ -12,7 +12,7 @@ Working with `React^16.13.0` and `Antd^4.6.3`, please confirm to install them fi
 ```sh
 $: npm install editable-tree-antd
 # or
-$: yarn add editable-teee-antd
+$: yarn add editable-tree-antd
 ```
 #### Options
 
