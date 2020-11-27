@@ -6,7 +6,7 @@
   "scripts": {
     "test": "",
     "clean": "rm lib/* -rf",
-    "compile": "npm run clean && babel src --out-dir lib && cp ./src/styles/icon-font ./lib/styles/ -rf"
+    "compile": "npm run clean && babel src --out-dir lib && cp ./src/styles/* ./lib/styles/ -rf"
   },
   "keywords": [
     "tree",
@@ -31,8 +31,7 @@
     "@babel/plugin-proposal-throw-expressions": "^7.12.1",
     "@babel/preset-env": "^7.12.7",
     "@babel/preset-react": "^7.12.7",
-    "@babel/preset-stage-2": "^7.8.3",
-    "babel-plugin-css-modules-transform": "^1.6.2"
+    "@babel/preset-stage-2": "^7.8.3"
   },
   "dependencies": {
     "antd": "^4.6.3",

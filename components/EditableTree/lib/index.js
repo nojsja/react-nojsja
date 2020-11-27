@@ -17,6 +17,8 @@ var _TreeNode = _interopRequireDefault(require("./TreeNode"));
 
 var _Tree = _interopRequireDefault(require("./Tree"));
 
+require("./styles/editable-tree.css");
+
 var _lang = _interopRequireDefault(require("./lang"));
 
 var _utils = require("utils/utils");
