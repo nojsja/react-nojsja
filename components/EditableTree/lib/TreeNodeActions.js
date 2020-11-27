@@ -23,7 +23,7 @@ function TreeNodeActions(_ref) {
       enableYaml = _ref.enableYaml,
       isInEdit = _ref.isInEdit,
       lang = _ref.lang;
-  return /*#__PURE__*/_react["default"].createElement("span", null, actionVisible ? /*#__PURE__*/_react["default"].createElement("span", {
+  return /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null, actionVisible ? /*#__PURE__*/_react["default"].createElement("span", {
     className: "editable-tree-node-action"
   }, !isInEdit && actionAddNodeVisible && /*#__PURE__*/_react["default"].createElement(_antd.Tooltip, {
     title: lang.addSisterNode

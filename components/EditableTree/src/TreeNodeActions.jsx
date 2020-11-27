@@ -15,7 +15,7 @@ export default function TreeNodeActions({
   lang,
 }) {
   return (
-    <span>
+    <React.Fragment>
           {
             actionVisible ?
             <span className="editable-tree-node-action">
@@ -41,6 +41,6 @@ export default function TreeNodeActions({
           :
             <span className="editable-tree-node-action" />
           }
-        </span>
+        </React.Fragment>
   );
 }

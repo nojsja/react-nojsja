@@ -2,33 +2,278 @@ body {
   background-color: #ffffff;
 }
 .container-router {
-  padding: 3rem;
+  padding: 1rem 2rem;
 }
-.editable-tree-wrapper .editable-tree-edit-confirm {
-  text-align: center;
-  padding-left: 5px;
+.container-router .content-wrapper {
+  width: 70%;
+  margin: auto;
 }
-.editable-tree-wrapper .editable-tree-edit-cancel {
-  padding-left: 5px;
+.divider-nojsja {
+  border-top-color: #797979 !important;
 }
-.editable-tree-wrapper .ant-input.normal-text {
-  width: 150px;
-}
-.editable-tree-wrapper .editable-tree-node-action {
-  padding-left: 4px;
-  display: inline-block;
-  text-align: left;
-  max-height: 24px;
-  min-width: 100px;
-}
-.editable-tree-wrapper .editable-tree-node-action i {
-  margin: 0 4px;
-}
-.editable-tree-wrapper .editable-tree-label {
+.infinite-scroll-wrapper {
   display: inline-block;
   width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 19px;
+  overflow-y: auto;
+}
+.infinite-scroll-wrapper::-webkit-scrollbar {
+  width: 7px;
+  height: 1px;
+}
+.infinite-scroll-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 7px;
+  background: #7A7973;
+}
+.infinite-scroll-wrapper::-webkit-scrollbar-track {
+  border-radius: 7px;
+  background: transparent;
+}
+/*
+ * @author nojsja
+ */
+/* -------------- variable -------------- */
+/* -------------- mixin -------------- */
+/*  进度条组件
+============================================================================= */
+.progress-self {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  border: solid 1px #cfd2d2;
+  box-sizing: border-box;
+  background-color: white;
+  text-align: left;
+  cursor: pointer;
+}
+.progress-self > div.bar {
+  position: relative;
+  top: -1px;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: top;
+}
+.progress-self > div.bar > span {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 0 1px grey;
+  -moz-box-shadow: 0 0 1px grey;
+  box-shadow: 0 0 1px grey;
+  width: 0.5rem;
+  height: 100%;
+  background-color: white;
+}
+/*
+ * @author nojsja
+ */
+/* -------------- variable -------------- */
+/* -------------- mixin -------------- */
+.audio-preview-wrapper {
+  width: 80%;
+  margin: 1rem auto;
+  border-radius: 5px;
+  padding: 1rem 0 0;
+  background-color: #f4f5f5;
+}
+.audio-preview-wrapper .audio-preview-icon {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.audio-preview-wrapper .audio-preview-icon > span {
+  display: inline-block;
+  padding: 3rem;
+  background-color: #fefefe;
+  -webkit-box-shadow: 0 0 5px #b1d4f0;
+  -moz-box-shadow: 0 0 5px #b1d4f0;
+  box-shadow: 0 0 5px #b1d4f0;
+}
+.audio-preview-wrapper .audio-preview-icon > span:hover {
+  -webkit-animation: rotateDelay 2s 0s 1;
+  -o-animation: rotateDelay 2s 0s 1;
+  animation: rotateDelay 2s 0s 1;
+  animation-fill-mode: both;
+}
+@keyframes rotateDelay {
+  50% {
+    -webkit-transform: translateY(0deg);
+    -moz-transform: translateY(0deg);
+    -ms-transform: translateY(0deg);
+    -o-transform: translateY(0deg);
+    transform: translateY(0deg);
+  }
+  100% {
+    -webkit-transform: rotateY(360deg);
+    -moz-transform: rotateY(360deg);
+    -ms-transform: rotateY(360deg);
+    -o-transform: rotateY(360deg);
+    transform: rotateY(360deg);
+  }
+}
+.audio-preview-wrapper .audio-preview-icon > span > i {
+  position: relative;
+  top: 5px;
+  font-size: 3rem;
+  color: #3684f1;
+}
+.audio-preview-wrapper > .progress-function-wrapper {
+  padding: 1rem 1rem 5px;
+  border-top: solid 3px white;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function {
+  position: relative;
+  text-align: center;
+  margin: 1rem auto;
+  cursor: pointer;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function > span {
+  font-size: 1.3rem;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function > span i {
+  margin: 0 10px;
+  color: #5D676E;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function > span i:hover {
+  color: black;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function > span.volume {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 1rem;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function > span.volume > input {
+  cursor: pointer;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function input[type=range] {
+  -webkit-appearance: none;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function input[type=range]::-webkit-slider-runnable-track {
+  height: 7px;
+  border-radius: 5px;
+  /*将轨道设为圆角的*/
+  -webkit-box-shadow: 0 0 3px grey inset;
+  -moz-box-shadow: 0 0 3px grey inset;
+  box-shadow: 0 0 3px grey inset;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function input[type=range]:focus {
+  outline: none;
+}
+.audio-preview-wrapper > .progress-function-wrapper .audio-preview-function input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 10px;
+  width: 10px;
+  margin-top: -1px;
+  background: #ffffff;
+  border-radius: 50%;
+  /*外观设置为圆形*/
+  border: solid 1px grey;
+}
+.audio-preview-wrapper > .progress-function-wrapper > .progress-wrapper {
+  position: relative;
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+.audio-preview-wrapper > .progress-function-wrapper > .progress-wrapper > span.time-now {
+  position: absolute;
+  top: -5px;
+  left: -5rem;
+  display: inline-block;
+  vertical-align: top;
+  height: 1rem;
+  width: 5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.audio-preview-wrapper > .progress-function-wrapper > .progress-wrapper > span.time-total {
+  position: absolute;
+  top: -5px;
+  right: -5rem;
+  height: 1rem;
+  width: 5rem;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  font-size: 0.9rem;
+}
+/*
+ * @author nojsja
+ */
+/* -------------- variable -------------- */
+/* -------------- mixin -------------- */
+/* ============================================================================
+  自定义模态窗 -- 显示添加标签和其它
+============================================================================= */
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes lovely {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.modal-self-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: scroll;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #4b565e;
+  z-index: 500;
+  animation: show 0.3s;
+}
+.modal-self-container .modal-content {
+  position: relative;
+  border-radius: 5px;
+  margin: 5rem auto 5rem;
+  width: 70%;
+  background-color: white;
+  animation: lovely 0.3s;
+}
+.modal-self-container .modal-content .modal-header {
+  height: 60px;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 25px;
+  border-bottom: solid 1px #d2d8dd;
+  line-height: 60px;
+  font-weight: bold;
+  font-size: 1.3rem;
+  z-index: 501;
+}
+.modal-self-container .modal-content .modal-button {
+  position: absolute;
+  display: inline-block;
+  top: 22px;
+  right: 1rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+.modal-self-container .modal-content .modal-button:hover {
+  color: #637db5;
+  cursor: pointer;
+}
+.modal-self-container .modal-content .modal-body {
+  min-height: 200px;
+  overflow: scroll;
+}
+@media screen and (min-width: 1400px) {
+  .modal-self-container .modal-content .modal-body {
+    min-height: 250px;
+  }
 }
