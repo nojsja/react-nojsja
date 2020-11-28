@@ -3,40 +3,76 @@ import { observable, action } from 'mobx';
 class Demo {
 
   @observable editableTree = {
-    treeData: [
-      {
-        nodeName: 'publisher',
-        id: 'publisher',
-        nameEditable: true, // default true
-        valueEditable: true, // default true
-        nodeValue: [
-          {
-            nodeName: 'publisher description',
-            isInEdit: true, // default false
-            id: 'publisher description',
-            nodeValue: [
-              {
-                nodeName: 'publisher name',
-                id: 'publisher name',
-                nodeValue: 'publisherA',
-              },
-              {
-                nodeName: 'publisher place',
-                id: 'publisher place',
-                nodeDeletable: false,
-                nodeValue: 'the node can not be deleted!',
-              },
-            ],
-          }
-        ],
-      },
-      {
-        nodeName: 'publisherB',
-        id: 'publisherB',
-        valueEditable: false, // default true
-        nodeValue: 'the value can not be edited!',
-      }
-    ]
+    treeData: {
+      'zh_CN': [
+        {
+          nodeName: '出版者',
+          id: 'publisher',
+          nameEditable: true, // default true
+          valueEditable: true, // default true
+          nodeValue: [
+            {
+              nodeName: '出版者描述',
+              isInEdit: true, // default false
+              id: 'publisher description',
+              nodeValue: [
+                {
+                  nodeName: '出版者名',
+                  id: 'publisher name',
+                  nodeValue: '出版者A',
+                },
+                {
+                  nodeName: '出版地',
+                  id: 'publisher place',
+                  nodeDeletable: false,
+                  nodeValue: '该层级不能删除!',
+                },
+              ],
+            }
+          ],
+        },
+        {
+          nodeName: '出版者B',
+          id: 'publisherB',
+          valueEditable: false, // default true
+          nodeValue: '该值不能被编辑!',
+        }
+      ],
+      'en_US': [
+        {
+          nodeName: 'publisher',
+          id: 'publisher',
+          nameEditable: true, // default true
+          valueEditable: true, // default true
+          nodeValue: [
+            {
+              nodeName: 'publisher description',
+              isInEdit: true, // default false
+              id: 'publisher description',
+              nodeValue: [
+                {
+                  nodeName: 'publisher name',
+                  id: 'publisher name',
+                  nodeValue: 'publisherA',
+                },
+                {
+                  nodeName: 'publisher place',
+                  id: 'publisher place',
+                  nodeDeletable: false,
+                  nodeValue: 'the node can not be deleted!',
+                },
+              ],
+            }
+          ],
+        },
+        {
+          nodeName: 'publisherB',
+          id: 'publisherB',
+          valueEditable: false, // default true
+          nodeValue: 'the value can not be edited!',
+        }
+      ]
+    }
   }
 
   @observable sourceTree = {

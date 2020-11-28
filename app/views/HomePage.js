@@ -5,7 +5,7 @@ import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
 import EditableTree from 'editable-tree-antd';
-// import EditableTree from 'components/EditableTree/src';
+// import EditableTree from 'components/EditableTree/lib';
 import SourceTree from 'components/TreeView';
 import AudioPreview from 'components/AudioPreview';
 import InfiniteScroll from 'components/InfiniteScroll/index';
@@ -47,10 +47,10 @@ class HomePage extends Component {
         <Divider className="divider-nojsja" orientation="right">EditableTree(antd)</Divider>
         <div className="content-wrapper">
           <EditableTree
-            data={toJS(editableTree.treeData)}
+            data={toJS(editableTree.treeData['zh_CN'])}
             maxLevel={10}
             enableYaml={true}
-            lang="en_US"
+            lang="zh_CN"
             onDataChange={this.onDataChange}
           />
         </div>

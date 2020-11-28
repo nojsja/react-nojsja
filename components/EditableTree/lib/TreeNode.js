@@ -250,7 +250,6 @@ var TreeNode = /*#__PURE__*/function (_Component) {
       var _this$props8 = _this.props,
           treeData = _this$props8.treeData,
           removeNode = _this$props8.removeNode;
-      console.log(treeData.key);
       removeNode(treeData.key);
     };
 

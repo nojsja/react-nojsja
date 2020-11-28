@@ -19,7 +19,7 @@ var _Tree = _interopRequireDefault(require("./Tree"));
 
 require("./styles/editable-tree.css");
 
-var _lang = _interopRequireDefault(require("./lang"));
+var _lang2 = _interopRequireDefault(require("./lang"));
 
 var _utils = require("./utils");
 
@@ -61,6 +61,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+var lang = (0, _lang2["default"])();
+
 var EditableTree = /*#__PURE__*/function (_Component) {
   _inherits(EditableTree, _Component);
 
@@ -80,13 +82,12 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       treeData: [],
       expandedKeys: [],
       enableYaml: false,
+      maxLevel: 50,
       lang: 'zh_CN'
     };
-    _this.maxLevel = 50;
     _this.dataOrigin = [];
     _this.treeModel = null;
     _this.key = (0, _utils.getRandomString)();
-    _this.lang = null;
 
     _this.modifyNode = function (key, treeNode) {
       var modifiedData = _this.treeModel.modifyNode(key, treeNode);
@@ -166,7 +167,7 @@ var EditableTree = /*#__PURE__*/function (_Component) {
         tree.key = key;
         treeData.key = key;
         tree.title = /*#__PURE__*/_react["default"].createElement(_TreeNode["default"], {
-          maxLevel: _this.maxLevel,
+          maxLevel: _this.state.maxLevel,
           treeData: treeData,
           enableYaml: _this.state.enableYaml,
           modifyNode: _this.modifyNode,
@@ -176,7 +177,7 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           addSubNode: _this.addSubNode,
           addNodeFragment: _this.addNodeFragment,
           removeNode: _this.removeNode,
-          lang: _this.lang
+          lang: lang(_this.state.lang)
         });
         if (treeData.nodeValue instanceof Array) tree.children = treeData.nodeValue.map(function (d) {
           return _this.formatNodeData(d);
@@ -200,18 +201,17 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       return tree;
     };
 
-    _this.updateTreeModel = function () {
+    _this.updateTreeModel = function (props) {
       if (_this.treeModel) {
-        _this.treeModel.update({
-          data: _this.dataOrigin,
-          key: _this.key
-        });
+        _this.treeModel.update(props);
       } else {
-        _this.treeModel = new _Tree["default"](_this.dataOrigin, _this.key, {
-          maxLevel: _this.maxLevel,
-          overLevelTips: _this.lang.template_tree_max_level_tips,
-          completeEditingNodeTips: _this.lang.pleaseCompleteTheNodeBeingEdited,
-          addSameLevelTips: _this.lang.extendedMetadata_same_level_name_cannot_be_added
+        var _lang = lang(_this.state.lang);
+
+        _this.treeModel = new _Tree["default"](props.data, props.key, {
+          maxLevel: _this.state.maxLevel,
+          overLevelTips: _lang.template_tree_max_level_tips,
+          completeEditingNodeTips: _lang.pleaseCompleteTheNodeBeingEdited,
+          addSameLevelTips: _lang.extendedMetadata_same_level_name_cannot_be_added
         });
       }
     };
@@ -252,8 +252,6 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           enableYaml = _this$props.enableYaml,
           _this$props$lang = _this$props.lang,
           lang = _this$props$lang === void 0 ? "zh_CN" : _this$props$lang;
-      this.lang = (0, _lang["default"])(lang);
-      this.maxLevel = maxLevel;
 
       if (data) {
         this.dataOrigin = data; // default value wrapper
@@ -263,7 +261,10 @@ var EditableTree = /*#__PURE__*/function (_Component) {
         _Tree["default"].levelDepthWrapper(this.dataOrigin);
 
         var formattedData = this.formatTreeData(this.dataOrigin);
-        this.updateTreeModel();
+        this.updateTreeModel({
+          data: this.dataOrigin,
+          key: this.key
+        });
 
         var keys = _Tree["default"].getTreeKeys(this.dataOrigin);
 
@@ -271,7 +272,9 @@ var EditableTree = /*#__PURE__*/function (_Component) {
         this.setState({
           treeData: formattedData,
           expandedKeys: keys,
-          enableYaml: !!enableYaml
+          enableYaml: !!enableYaml,
+          maxLevel: maxLevel,
+          lang: lang
         });
       }
     }
@@ -284,9 +287,11 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           enableYaml = nextProps.enableYaml,
           _nextProps$lang = nextProps.lang,
           lang = _nextProps$lang === void 0 ? "zh_CN" : _nextProps$lang;
-      this.lang = (0, _lang["default"])(lang);
-      this.maxLevel = maxLevel;
-      data = data;
+      this.setState({
+        enableYaml: !!enableYaml,
+        lang: lang,
+        maxLevel: maxLevel
+      });
 
       try {
         if (!(0, _utils.deepComparison)(_Tree["default"].getNudeTreeData((0, _utils.deepClone)(this.dataOrigin)), _Tree["default"].getNudeTreeData((0, _utils.deepClone)(data)))) {
@@ -298,16 +303,17 @@ var EditableTree = /*#__PURE__*/function (_Component) {
 
 
           var formattedData = this.formatTreeData(this.dataOrigin);
-          this.updateTreeModel();
+          this.updateTreeModel({
+            data: this.dataOrigin,
+            key: this.key
+          });
 
           var keys = _Tree["default"].getTreeKeys(this.dataOrigin);
 
           this.onDataChange(this.dataOrigin);
           this.setState({
             treeData: formattedData,
-            expandedKeys: keys,
-            enableYaml: !!enableYaml,
-            lang: lang
+            expandedKeys: keys
           });
         }
       } catch (error) {

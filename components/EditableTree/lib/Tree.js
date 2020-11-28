@@ -587,8 +587,8 @@ var Tree = /*#__PURE__*/function () {
     value: function update(_ref12) {
       var data = _ref12.data,
           key = _ref12.key;
-      this.treeData = data;
-      this.treeKey = key;
+      data && (this.treeData = data);
+      key && (this.treeKey = key);
     }
   }], [{
     key: "defaultTreeValueWrapper",
@@ -742,15 +742,21 @@ Tree.levelDepthWrapper = function (treeData) {
 };
 
 Tree.getNudeTreeData = function (dataArray) {
+  var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+    nameEditable: true,
+    valueEditable: true,
+    nodeDeletable: true,
+    isInEdit: false
+  };
   var level;
 
   for (var i = 0; i < dataArray.length; i++) {
     level = {
       nodeName: dataArray[i].nodeName,
-      nameEditable: dataArray[i].nameEditable,
-      valueEditable: dataArray[i].valueEditable,
-      nodeDeletable: dataArray[i].nodeDeletable,
-      nodeValue: (0, _utils.typeCheck)(dataArray[i].nodeValue, 'array') ? Tree.getNudeTreeData(dataArray[i].nodeValue) : dataArray[i].nodeValue
+      nameEditable: dataArray[i].nameEditable === undefined ? defaultValue.nameEditable : dataArray[i].nameEditable,
+      valueEditable: dataArray[i].valueEditable === undefined ? defaultValue.valueEditable : dataArray[i].valueEditable,
+      nodeDeletable: dataArray[i].nodeDeletable === undefined ? defaultValue.nodeDeletable : dataArray[i].nodeDeletable,
+      nodeValue: (0, _utils.typeCheck)(dataArray[i].nodeValue, 'array') ? Tree.getNudeTreeData(dataArray[i].nodeValue, defaultValue) : dataArray[i].nodeValue
     };
     dataArray[i] = level;
   }

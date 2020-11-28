@@ -1,9 +1,9 @@
 ### EditableTree
 --------------
-A editable tree component based on antd tree and powered by react.
+An editable tree component based on antd tree and powered by react.
 
 #### Preview
-![EditableTree](https://raw.githubusercontent.com/nojsja/react-nojsja/master/components/EditableTree/resources/EditableTree.png)
+![EditableTree](https://raw.githubusercontent.com/nojsja/react-nojsja/master/components/EditableTree/resources/EditableTree.jpg)
 
 #### Env
 Working with `React^16.13.0` and `Antd^4.6.3`, please confirm to install them first.
@@ -17,7 +17,7 @@ $: yarn add editable-tree-antd
 #### Options
 
 * __data__ [Array]  
-The data to build a editable antd tree, Check data instruction from `Usage` below.
+The data to build an editable antd tree, Check data instruction from `Usage` below.
 
 * maxLevel [Number]  
 The max tree level depth, default 50.
@@ -80,7 +80,7 @@ import EditableTree from 'editable-tree-antd';
 <EditableTree
   data={treeData} // see demo data above
   maxLevel={10} // tree max level limitation, default 50
-  enableYaml={true} // enable to parse yaml string, default false
+  enableYaml={true} // enable parse yaml string, default false
   lang="en_US" // default zh_CN
   onDataChange={this.onDataChange} // data change listener
 />

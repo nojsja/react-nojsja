@@ -9,45 +9,46 @@ import './styles/editable-tree.css';
 import Lang from './lang';
 import { getRandomString, deepComparison, deepClone } from './utils';
 
+const lang = Lang();
+
 class EditableTree extends Component {
   state = {
     treeData: [],
     expandedKeys: [],
     enableYaml: false,
+    maxLevel: 50,
     lang: 'zh_CN'
   };
-  maxLevel= 50
   dataOrigin = []
   treeModel = null
   key=getRandomString()
-  lang=null
 
   componentDidMount() {
     const { data, maxLevel = 50, enableYaml, lang="zh_CN" } = this.props;
-    this.lang = Lang(lang);
-    this.maxLevel = maxLevel;
     if (data) {
-      this.dataOrigin = (data);
+      this.dataOrigin = data;
       // default value wrapper
       TreeClass.defaultTreeValueWrapper(this.dataOrigin);
       TreeClass.levelDepthWrapper(this.dataOrigin);
       const formattedData = this.formatTreeData(this.dataOrigin);
-      this.updateTreeModel();
+      this.updateTreeModel({ data: this.dataOrigin, key: this.key });
       const keys = TreeClass.getTreeKeys(this.dataOrigin);
       this.onDataChange(this.dataOrigin);
       this.setState({
         treeData: formattedData,
         expandedKeys: keys,
-        enableYaml: !!enableYaml
+        enableYaml: !!enableYaml,
+        maxLevel: maxLevel,
+        lang
       });
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    let { data, maxLevel = 50, enableYaml, lang="zh_CN" } = nextProps;
-    this.lang = Lang(lang);
-    this.maxLevel = maxLevel;
-    data = (data);
+    const { data, maxLevel = 50, enableYaml, lang="zh_CN" } = nextProps;
+
+    this.setState({ enableYaml: !!enableYaml, lang, maxLevel });
+
     try {
       if (
         !deepComparison(
@@ -60,14 +61,12 @@ class EditableTree extends Component {
         TreeClass.levelDepthWrapper(this.dataOrigin);
         // render tree node
         const formattedData = this.formatTreeData(this.dataOrigin);
-        this.updateTreeModel();
+        this.updateTreeModel({ data: this.dataOrigin, key: this.key });
         const keys = TreeClass.getTreeKeys(this.dataOrigin);
         this.onDataChange(this.dataOrigin);
         this.setState({
           treeData: formattedData,
-          expandedKeys: keys,
-          enableYaml: !!enableYaml,
-          lang,
+          expandedKeys: keys
         });
       }
     } catch (error) {
@@ -143,7 +142,7 @@ class EditableTree extends Component {
       treeData.key = key;
       tree.title =
         (<TreeNode
-          maxLevel={this.maxLevel}
+          maxLevel={this.state.maxLevel}
           treeData={treeData}
           enableYaml={this.state.enableYaml}
           modifyNode={this.modifyNode}
@@ -153,7 +152,7 @@ class EditableTree extends Component {
           addSubNode={this.addSubNode}
           addNodeFragment={this.addNodeFragment}
           removeNode={this.removeNode}
-          lang={this.lang}
+          lang={lang(this.state.lang)}
         />);
       if (treeData.nodeValue instanceof Array) tree.children = treeData.nodeValue.map(d => this.formatNodeData(d));
     } else {
@@ -172,21 +171,19 @@ class EditableTree extends Component {
   }
 
   /* update tree model */
-  updateTreeModel = () => {
+  updateTreeModel = (props) => {
     if (this.treeModel) {
-      this.treeModel.update({
-        data: this.dataOrigin,
-        key: this.key
-      });
+      this.treeModel.update(props);
     } else {
+      const _lang = lang(this.state.lang);
       this.treeModel = new TreeClass(
-        this.dataOrigin,
-        this.key,
+        props.data,
+        props.key,
         {
-          maxLevel: this.maxLevel,
-          overLevelTips: this.lang.template_tree_max_level_tips,
-          completeEditingNodeTips: this.lang.pleaseCompleteTheNodeBeingEdited,
-          addSameLevelTips: this.lang.extendedMetadata_same_level_name_cannot_be_added,
+          maxLevel: this.state.maxLevel,
+          overLevelTips: _lang.template_tree_max_level_tips,
+          completeEditingNodeTips: _lang.pleaseCompleteTheNodeBeingEdited,
+          addSameLevelTips: _lang.extendedMetadata_same_level_name_cannot_be_added,
         }
       );
     }

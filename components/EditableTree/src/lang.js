@@ -1,5 +1,5 @@
 
-export default function lang(env) {
+export default function lang() {
   const langConf = {
     zh_CN: {
       template_tree_max_level_tips: '已经限制树的最大深度为：',
@@ -32,6 +32,9 @@ export default function lang(env) {
       deleteLevel: 'Delete Level',
     }
   };
+
+  return  (env) => {
+    return langConf[env] || langConf['zh_CN'];
+  };
   
-  return langConf[env] || langConf['zh_CN'];
 }

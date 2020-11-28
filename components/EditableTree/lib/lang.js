@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = lang;
 
-function lang(env) {
+function lang() {
   var langConf = {
     zh_CN: {
       template_tree_max_level_tips: '已经限制树的最大深度为：',
@@ -38,5 +38,7 @@ function lang(env) {
       deleteLevel: 'Delete Level'
     }
   };
-  return langConf[env] || langConf['zh_CN'];
+  return function (env) {
+    return langConf[env] || langConf['zh_CN'];
+  };
 }

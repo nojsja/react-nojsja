@@ -99,16 +99,26 @@ export default class Tree {
   }
 
   /* get nude data */
-  static getNudeTreeData = (dataArray) => {
+  static getNudeTreeData = (dataArray, defaultValue = {
+    nameEditable: true,
+    valueEditable: true,
+    nodeDeletable: true,
+    isInEdit: false
+  }) => {
     let level;
     for (let i = 0; i < dataArray.length; i++) {
       level = {
         nodeName: dataArray[i].nodeName,
-        nameEditable: dataArray[i].nameEditable,
-        valueEditable: dataArray[i].valueEditable,
-        nodeDeletable: dataArray[i].nodeDeletable,
+        nameEditable: dataArray[i].nameEditable === undefined ?
+          defaultValue.nameEditable : dataArray[i].nameEditable,
+        valueEditable: dataArray[i].valueEditable === undefined ?
+          defaultValue.valueEditable :
+          dataArray[i].valueEditable,
+        nodeDeletable: dataArray[i].nodeDeletable === undefined ?
+          defaultValue.nodeDeletable :
+          dataArray[i].nodeDeletable,
         nodeValue: typeCheck(dataArray[i].nodeValue, 'array') ?
-          Tree.getNudeTreeData(dataArray[i].nodeValue) :
+          Tree.getNudeTreeData(dataArray[i].nodeValue, defaultValue) :
           dataArray[i].nodeValue,
       };
       dataArray[i] = level;
@@ -567,7 +577,7 @@ export default class Tree {
 
   /* update tree data */
   update({ data, key }) {
-    this.treeData = data;
-    this.treeKey = key;
+    data && (this.treeData = data);
+    key && (this.treeKey = key);
   }
 }

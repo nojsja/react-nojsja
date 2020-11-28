@@ -179,7 +179,6 @@ export default class TreeNode extends Component {
 
   removeNode = () => {
     const { treeData, removeNode } = this.props;
-    console.log(treeData.key);
     removeNode(treeData.key);
   }
 
