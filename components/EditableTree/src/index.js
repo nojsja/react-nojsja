@@ -7,13 +7,12 @@ import TreeClass from './Tree';
 import './styles/editable-tree.css';
 
 import Lang from './lang';
-import { getRandomString, deepComparison } from 'utils/utils';
+import { getRandomString, deepComparison, deepClone } from './utils';
 
 class EditableTree extends Component {
   state = {
     treeData: [],
     expandedKeys: [],
-    focusKey: '',
     enableYaml: false,
     lang: 'zh_CN'
   };
@@ -52,10 +51,9 @@ class EditableTree extends Component {
     try {
       if (
         !deepComparison(
-          TreeClass.getNudeTreeData(JSON.parse(JSON.stringify(this.dataOrigin))),
-          TreeClass.getNudeTreeData(JSON.parse(JSON.stringify(data)))
+          TreeClass.getNudeTreeData(deepClone(this.dataOrigin)),
+          TreeClass.getNudeTreeData(deepClone(data))
         )) {
-        console.log('update', JSON.parse(JSON.stringify(data)));
         this.dataOrigin = data;
         // default value wrapper
         TreeClass.defaultTreeValueWrapper(this.dataOrigin);
@@ -146,7 +144,6 @@ class EditableTree extends Component {
       tree.title =
         (<TreeNode
           maxLevel={this.maxLevel}
-          focusKey={this.state.focusKey}
           treeData={treeData}
           enableYaml={this.state.enableYaml}
           modifyNode={this.modifyNode}
@@ -156,7 +153,6 @@ class EditableTree extends Component {
           addSubNode={this.addSubNode}
           addNodeFragment={this.addNodeFragment}
           removeNode={this.removeNode}
-          setFocus={this.setFocus}
           lang={this.lang}
         />);
       if (treeData.nodeValue instanceof Array) tree.children = treeData.nodeValue.map(d => this.formatNodeData(d));
@@ -177,16 +173,23 @@ class EditableTree extends Component {
 
   /* update tree model */
   updateTreeModel = () => {
-    this.treeModel = new TreeClass(
-      this.dataOrigin,
-      this.key,
-      {
-        maxLevel: this.maxLevel,
-        overLevelTips: this.lang.template_tree_max_level_tips,
-        completeEditingNodeTips: this.lang.pleaseCompleteTheNodeBeingEdited,
-        addSameLevelTips: this.lang.extendedMetadata_same_level_name_cannot_be_added,
-      }
-    );
+    if (this.treeModel) {
+      this.treeModel.update({
+        data: this.dataOrigin,
+        key: this.key
+      });
+    } else {
+      this.treeModel = new TreeClass(
+        this.dataOrigin,
+        this.key,
+        {
+          maxLevel: this.maxLevel,
+          overLevelTips: this.lang.template_tree_max_level_tips,
+          completeEditingNodeTips: this.lang.pleaseCompleteTheNodeBeingEdited,
+          addSameLevelTips: this.lang.extendedMetadata_same_level_name_cannot_be_added,
+        }
+      );
+    }
   }
 
   /* expand/unexpand */

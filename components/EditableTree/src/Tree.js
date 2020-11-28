@@ -1,4 +1,4 @@
-import { getRandomString, typeCheck } from 'utils/utils';
+import { getRandomString, typeCheck, deepClone } from './utils';
 import { message } from 'antd';
 
 export default class Tree {
@@ -562,6 +562,12 @@ export default class Tree {
 
   /* get tree data */
   getTreeData() {
-    return JSON.parse(JSON.stringify(this.treeData));
+    return deepClone(this.treeData);
+  }
+
+  /* update tree data */
+  update({ data, key }) {
+    this.treeData = data;
+    this.treeKey = key;
   }
 }

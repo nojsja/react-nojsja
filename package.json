@@ -27,7 +27,7 @@
     "@ant-design/icons": "^4.0.2",
     "antd": "^4.6.3",
     "axios": "^0.19.2",
-    "editable-tree-antd": "^1.0.5",
+    "editable-tree-antd": "^1.0.6",
     "history": "^4.7.2",
     "mobx": "^4.4.1",
     "mobx-react": "^5.2.8",

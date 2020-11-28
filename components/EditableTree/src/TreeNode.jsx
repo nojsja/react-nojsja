@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, message } from 'antd';
 
 import { parse } from 'yaml';
-import { typeCheck } from 'utils/utils';
+import { typeCheck } from './utils';
 
 import TreeClass from './Tree';
 import TreeNodeActions from './TreeNodeActions';

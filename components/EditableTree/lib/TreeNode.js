@@ -13,7 +13,7 @@ var _antd = require("antd");
 
 var _yaml = require("yaml");
 
-var _utils = require("utils/utils");
+var _utils = require("./utils");
 
 var _Tree = _interopRequireDefault(require("./Tree"));
 

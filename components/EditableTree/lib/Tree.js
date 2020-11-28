@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _utils = require("utils/utils");
+var _utils = require("./utils");
 
 var _antd = require("antd");
 
@@ -578,7 +578,17 @@ var Tree = /*#__PURE__*/function () {
   }, {
     key: "getTreeData",
     value: function getTreeData() {
-      return JSON.parse(JSON.stringify(this.treeData));
+      return (0, _utils.deepClone)(this.treeData);
+    }
+    /* update tree data */
+
+  }, {
+    key: "update",
+    value: function update(_ref12) {
+      var data = _ref12.data,
+          key = _ref12.key;
+      this.treeData = data;
+      this.treeKey = key;
     }
   }], [{
     key: "defaultTreeValueWrapper",

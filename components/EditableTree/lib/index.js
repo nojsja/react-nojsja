@@ -21,7 +21,7 @@ require("./styles/editable-tree.css");
 
 var _lang = _interopRequireDefault(require("./lang"));
 
-var _utils = require("utils/utils");
+var _utils = require("./utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -79,7 +79,6 @@ var EditableTree = /*#__PURE__*/function (_Component) {
     _this.state = {
       treeData: [],
       expandedKeys: [],
-      focusKey: '',
       enableYaml: false,
       lang: 'zh_CN'
     };
@@ -168,7 +167,6 @@ var EditableTree = /*#__PURE__*/function (_Component) {
         treeData.key = key;
         tree.title = /*#__PURE__*/_react["default"].createElement(_TreeNode["default"], {
           maxLevel: _this.maxLevel,
-          focusKey: _this.state.focusKey,
           treeData: treeData,
           enableYaml: _this.state.enableYaml,
           modifyNode: _this.modifyNode,
@@ -178,7 +176,6 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           addSubNode: _this.addSubNode,
           addNodeFragment: _this.addNodeFragment,
           removeNode: _this.removeNode,
-          setFocus: _this.setFocus,
           lang: _this.lang
         });
         if (treeData.nodeValue instanceof Array) tree.children = treeData.nodeValue.map(function (d) {
@@ -204,12 +201,19 @@ var EditableTree = /*#__PURE__*/function (_Component) {
     };
 
     _this.updateTreeModel = function () {
-      _this.treeModel = new _Tree["default"](_this.dataOrigin, _this.key, {
-        maxLevel: _this.maxLevel,
-        overLevelTips: _this.lang.template_tree_max_level_tips,
-        completeEditingNodeTips: _this.lang.pleaseCompleteTheNodeBeingEdited,
-        addSameLevelTips: _this.lang.extendedMetadata_same_level_name_cannot_be_added
-      });
+      if (_this.treeModel) {
+        _this.treeModel.update({
+          data: _this.dataOrigin,
+          key: _this.key
+        });
+      } else {
+        _this.treeModel = new _Tree["default"](_this.dataOrigin, _this.key, {
+          maxLevel: _this.maxLevel,
+          overLevelTips: _this.lang.template_tree_max_level_tips,
+          completeEditingNodeTips: _this.lang.pleaseCompleteTheNodeBeingEdited,
+          addSameLevelTips: _this.lang.extendedMetadata_same_level_name_cannot_be_added
+        });
+      }
     };
 
     _this.onExpand = function (expandedKeys, _ref) {
@@ -285,8 +289,7 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       data = data;
 
       try {
-        if (!(0, _utils.deepComparison)(_Tree["default"].getNudeTreeData(JSON.parse(JSON.stringify(this.dataOrigin))), _Tree["default"].getNudeTreeData(JSON.parse(JSON.stringify(data))))) {
-          console.log('update', JSON.parse(JSON.stringify(data)));
+        if (!(0, _utils.deepComparison)(_Tree["default"].getNudeTreeData((0, _utils.deepClone)(this.dataOrigin)), _Tree["default"].getNudeTreeData((0, _utils.deepClone)(data)))) {
           this.dataOrigin = data; // default value wrapper
 
           _Tree["default"].defaultTreeValueWrapper(this.dataOrigin);
