@@ -214,7 +214,6 @@ export function deepClone(parent) {
   };
   
   const isType = (obj, type) => {
-    if (typeof obj !== 'object') return false;
     const typeString = Object.prototype.toString.call(obj);
     let flag;
     switch (type) {
@@ -234,9 +233,7 @@ export function deepClone(parent) {
   };
 
   const _clone = parent => {
-    if (parent === null) return null;
-    if (typeof parent !== 'object') return parent;
-    if (parent !== parent) return NaN;
+    if (typeof parent !== 'object' || parent === null) return parent;
 
     let child, proto, index;
 
@@ -245,8 +242,10 @@ export function deepClone(parent) {
     } else if (isType(parent, 'RegExp')) {
       child = new RegExp(parent.source, getRegExp(parent));
       if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+      return child;
     } else if (isType(parent, 'Date')) {
       child = new Date(parent.getTime());
+      return child;
     } else {
       proto = Object.getPrototypeOf(parent);
       child = Object.create(proto);
@@ -255,6 +254,7 @@ export function deepClone(parent) {
     // 处理循环引用
     index = parents.indexOf(parent);
     if (index != -1) return children[index];
+    
     parents.push(parent);
     children.push(child);
 
