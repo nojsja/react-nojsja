@@ -249,7 +249,6 @@ function deepClone(parent) {
   };
 
   var isType = function isType(obj, type) {
-    if (_typeof(obj) !== 'object') return false;
     var typeString = Object.prototype.toString.call(obj);
     var flag;
 
@@ -274,9 +273,7 @@ function deepClone(parent) {
   };
 
   var _clone = function _clone(parent) {
-    if (parent === null) return null;
-    if (_typeof(parent) !== 'object') return parent;
-    if (parent !== parent) return NaN;
+    if (_typeof(parent) !== 'object' || parent === null) return parent;
     var child, proto, index;
 
     if (isType(parent, 'Array')) {
@@ -284,8 +281,10 @@ function deepClone(parent) {
     } else if (isType(parent, 'RegExp')) {
       child = new RegExp(parent.source, getRegExp(parent));
       if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+      return child;
     } else if (isType(parent, 'Date')) {
       child = new Date(parent.getTime());
+      return child;
     } else {
       proto = Object.getPrototypeOf(parent);
       child = Object.create(proto);
