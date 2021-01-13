@@ -10,7 +10,6 @@ import Lang from './lang';
 import { getRandomString, deepComparison, deepClone } from './utils';
 
 const lang = Lang();
-
 class EditableTree extends Component {
   state = {
     treeData: [],

@@ -7,26 +7,25 @@ export const getRandomString = () => Math.random().toString(36).substr(2);
  * @return {[Boolean]}      [是否相同]
  */
 export function deepComparison(data1, data2) {
-  const { hasOwnProperty } = Object.prototype;
+  const { hasOwnProperty, toString } = Object.prototype;
 
   // 获取变量类型
-  const getType = (d) => {
-    if (typeof d === 'object') {
-      if (!(d instanceof Object)) {
+  const getTypeOf = (data) => {
+    if (data !== data) return 'nan';
+    switch(toString.call(data)) {
+      case '[object Null]':
         return 'null';
-      }
-      if (d instanceof Date) {
-        return 'date';
-      }
-      if (d instanceof RegExp) {
+      case '[object Array]':
+        return 'array';
+      case '[object Object]':
+        return 'object';
+      case '[object RegExp]':
         return 'regexp';
-      }
-
-      // object / array //
-      return 'object';
+      case '[object Date]':
+        return 'date';
+      default:
+        return (typeof data);
     }
-    if (d !== d) return 'nan';
-    return (typeof d).toLowerCase();
   };
 
   // 基本类型比较
@@ -38,14 +37,14 @@ export function deepComparison(data1, data2) {
 
   // 递归比较
   const compare = (d1, d2) => {
-    const type1 = getType(d1);
-    const type2 = getType(d2);
+    const type1 = getTypeOf(d1);
+    const type2 = getTypeOf(d2);
 
     if (type1 !== type2) {
       return false;
     }
 
-    if (type1 === 'object') {
+    if (type1 === 'object' || type1 === 'array') {
       const keys1 = Object.keys(d1).filter(k => hasOwnProperty.call(d1, k));
       const keys2 = Object.keys(d2).filter(k => hasOwnProperty.call(d2, k));
       if (keys1.length !== keys2.length) {
@@ -200,70 +199,39 @@ export function secondsToTime(seconds) {
 * @return {[Any]}
 */
 
-export function deepClone(parent) {
-  // 维护两个储存循环引用的数组
-  const parents = [];
-  const children = [];
+export function deepClone(data) {
+
+  const map = new WeakMap();
   
-  const getRegExp = re => {
-    var flags = '';
-    if (re.global) flags += 'g';
-    if (re.ignoreCase) flags += 'i';
-    if (re.multiline) flags += 'm';
-    return flags;
-  };
-  
-  const isType = (obj, type) => {
-    const typeString = Object.prototype.toString.call(obj);
-    let flag;
-    switch (type) {
-      case 'Array':
-        flag = typeString === '[object Array]';
-        break;
-      case 'Date':
-        flag = typeString === '[object Date]';
-        break;
-      case 'RegExp':
-        flag = typeString === '[object RegExp]';
-        break;
-      default:
-        flag = false;
-    }
-    return flag;
+  const isObjType = (obj, type) => {
+    if (typeof obj !== 'object') return false;
+    return Object.prototype.toString.call(obj) === `[object ${type}]`;
   };
 
-  const _clone = parent => {
-    if (typeof parent !== 'object' || parent === null) return parent;
+  const _clone = (target) => {
+    if (target === null) return null;
+    if (target !== target) return NaN;
+    if (typeof target !== 'object') return target;
+    
+    let base;
 
-    let child, proto, index;
+    // 对正则对象做特殊处理
+    if (isObjType(target, 'RegExp')) return new RegExp(target.source, target.flags);
+    // 对Date对象做特殊处理
+    if (isObjType(target, 'Date')) return new Date(target.getTime());
 
-    if (isType(parent, 'Array')) {
-      child = [];
-    } else if (isType(parent, 'RegExp')) {
-      child = new RegExp(parent.source, getRegExp(parent));
-      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-      return child;
-    } else if (isType(parent, 'Date')) {
-      child = new Date(parent.getTime());
-      return child;
-    } else {
-      proto = Object.getPrototypeOf(parent);
-      child = Object.create(proto);
-    }
+    base = isObjType(target, 'Array') ? [] : {};
 
     // 处理循环引用
-    index = parents.indexOf(parent);
-    if (index != -1) return children[index];
+    if (map.get(target)) return map.get(target);
+    map.set(target, base);
     
-    parents.push(parent);
-    children.push(child);
-
-    for (let i in parent) {
-      child[i] = _clone(parent[i]);
+    for (let i in target) {
+      base[i] = _clone(target[i]);
     }
-
-    return child;
+    
+    return base;
   };
 
-  return _clone(parent);
+  return _clone(data);
 };

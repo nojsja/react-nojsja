@@ -28,28 +28,32 @@ var getRandomString = function getRandomString() {
 exports.getRandomString = getRandomString;
 
 function deepComparison(data1, data2) {
-  var hasOwnProperty = Object.prototype.hasOwnProperty; // 获取变量类型
+  var _Object$prototype = Object.prototype,
+      hasOwnProperty = _Object$prototype.hasOwnProperty,
+      toString = _Object$prototype.toString; // 获取变量类型
 
-  var getType = function getType(d) {
-    if (_typeof(d) === 'object') {
-      if (!(d instanceof Object)) {
+  var getTypeOf = function getTypeOf(data) {
+    if (data !== data) return 'nan';
+
+    switch (toString.call(data)) {
+      case '[object Null]':
         return 'null';
-      }
 
-      if (d instanceof Date) {
-        return 'date';
-      }
+      case '[object Array]':
+        return 'array';
 
-      if (d instanceof RegExp) {
+      case '[object Object]':
+        return 'object';
+
+      case '[object RegExp]':
         return 'regexp';
-      } // object / array //
 
+      case '[object Date]':
+        return 'date';
 
-      return 'object';
+      default:
+        return _typeof(data);
     }
-
-    if (d !== d) return 'nan';
-    return _typeof(d).toLowerCase();
   }; // 基本类型比较
 
 
@@ -61,14 +65,14 @@ function deepComparison(data1, data2) {
 
 
   var compare = function compare(d1, d2) {
-    var type1 = getType(d1);
-    var type2 = getType(d2);
+    var type1 = getTypeOf(d1);
+    var type2 = getTypeOf(d2);
 
     if (type1 !== type2) {
       return false;
     }
 
-    if (type1 === 'object') {
+    if (type1 === 'object' || type1 === 'array') {
       var keys1 = Object.keys(d1).filter(function (k) {
         return hasOwnProperty.call(d1, k);
       });
@@ -235,75 +239,36 @@ function secondsToTime(seconds) {
 */
 
 
-function deepClone(parent) {
-  // 维护两个储存循环引用的数组
-  var parents = [];
-  var children = [];
+function deepClone(data) {
+  var map = new WeakMap();
 
-  var getRegExp = function getRegExp(re) {
-    var flags = '';
-    if (re.global) flags += 'g';
-    if (re.ignoreCase) flags += 'i';
-    if (re.multiline) flags += 'm';
-    return flags;
+  var isObjType = function isObjType(obj, type) {
+    if (_typeof(obj) !== 'object') return false;
+    return Object.prototype.toString.call(obj) === "[object ".concat(type, "]");
   };
 
-  var isType = function isType(obj, type) {
-    var typeString = Object.prototype.toString.call(obj);
-    var flag;
+  var _clone = function _clone(target) {
+    if (target === null) return null;
+    if (target !== target) return NaN;
+    if (_typeof(target) !== 'object') return target;
+    var base; // 对正则对象做特殊处理
 
-    switch (type) {
-      case 'Array':
-        flag = typeString === '[object Array]';
-        break;
+    if (isObjType(target, 'RegExp')) return new RegExp(target.source, target.flags); // 对Date对象做特殊处理
 
-      case 'Date':
-        flag = typeString === '[object Date]';
-        break;
+    if (isObjType(target, 'Date')) return new Date(target.getTime());
+    base = isObjType(target, 'Array') ? [] : {}; // 处理循环引用
 
-      case 'RegExp':
-        flag = typeString === '[object RegExp]';
-        break;
+    if (map.get(target)) return map.get(target);
+    map.set(target, base);
 
-      default:
-        flag = false;
+    for (var i in target) {
+      base[i] = _clone(target[i]);
     }
 
-    return flag;
+    return base;
   };
 
-  var _clone = function _clone(parent) {
-    if (_typeof(parent) !== 'object' || parent === null) return parent;
-    var child, proto, index;
-
-    if (isType(parent, 'Array')) {
-      child = [];
-    } else if (isType(parent, 'RegExp')) {
-      child = new RegExp(parent.source, getRegExp(parent));
-      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-      return child;
-    } else if (isType(parent, 'Date')) {
-      child = new Date(parent.getTime());
-      return child;
-    } else {
-      proto = Object.getPrototypeOf(parent);
-      child = Object.create(proto);
-    } // 处理循环引用
-
-
-    index = parents.indexOf(parent);
-    if (index != -1) return children[index];
-    parents.push(parent);
-    children.push(child);
-
-    for (var i in parent) {
-      child[i] = _clone(parent[i]);
-    }
-
-    return child;
-  };
-
-  return _clone(parent);
+  return _clone(data);
 }
 
 ;
