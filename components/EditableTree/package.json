@@ -1,6 +1,6 @@
 {
   "name": "editable-tree-antd",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "An editable treeview component based on antd and powered by react.",
   "main": "lib/index.js",
   "scripts": {

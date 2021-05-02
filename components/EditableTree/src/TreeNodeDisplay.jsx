@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import { longNameFormatterNoTail } from 'utils/utils';
+import { longNameFormatterNoTail } from './utils';
 
 export default function TreeNodeDisplay({
   editNameInputVisible,
