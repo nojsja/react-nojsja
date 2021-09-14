@@ -15,7 +15,7 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    extensions: [".js", ".jsx", ".es6"],
+    extensions: [".js", ".jsx", ".es6", ".ts", ".tsx"],
     alias: {
       react: path.resolve('node_modules/react'),
       resources: path.resolve(__dirname, 'resources'),
@@ -25,6 +25,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        loaders: ['babel-loader', 'ts-loader']
+      },
       {
         test: /\.m?js|\.jsx$/,
         exclude: /(node_modules|bower_components)/,
