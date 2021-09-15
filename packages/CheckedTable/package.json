@@ -1,0 +1,13 @@
+{
+  "name": "@nojsja/checked-table",
+  "version": "0.0.1",
+  "description": "An checked-table component powered by react.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "nojsja",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

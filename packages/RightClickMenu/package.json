@@ -1,0 +1,13 @@
+{
+  "name": "@nojsja/right-click-menu",
+  "version": "0.0.1",
+  "description": "An right-click menu component powered by react.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "nojsja",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

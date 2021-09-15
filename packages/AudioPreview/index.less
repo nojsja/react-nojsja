@@ -1,0 +1,139 @@
+@import '../../snippets/less/public.less';
+
+.audio-preview-wrapper {
+  width: 80%;
+  margin: 1rem auto;
+  border-radius: 5px;
+  padding: 1rem 0 0;
+
+  background-color: #f4f5f5;
+
+  .audio-preview-icon {
+    margin-bottom: 2rem;
+
+    text-align: center;
+
+    > span {
+      display: inline-block;
+      padding: 3rem;
+
+      background-color: #fefefe;
+      .boxShadowRound(5px, #b1d4f0);
+
+      &:hover {
+        .rotateAnimationDelay(2s, 1, 360deg);
+      }
+
+      > i {
+        position: relative;
+        top: 5px;
+
+        font-size: 3rem;
+        color: #3684f1;
+      }
+    }
+
+  }
+
+  > .progress-function-wrapper {
+    padding: 1rem 1rem 5px;
+    border-top: solid 3px white;
+
+
+    .audio-preview-function {
+      position: relative;
+
+      text-align: center;
+      margin: 1rem auto;
+
+      cursor: pointer;
+
+      > span {
+        font-size: 1.3rem;
+
+        i {
+          margin: 0 10px;
+          color: #5D676E;
+        }
+
+        i:hover {
+          color: black;
+        }
+      }
+
+      > span.volume {
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        font-size: 1rem;
+
+        > input {
+          cursor: pointer;
+        }
+      }
+
+      // 覆盖默认样式
+      input[type=range] {
+        -webkit-appearance: none;
+      }
+      input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+      }
+      input[type=range]::-webkit-slider-runnable-track {
+        height: 7px;
+        border-radius: 5px; /*将轨道设为圆角的*/
+        .boxShadowInner(3px, grey);
+      }
+
+      input[type=range]:focus {
+          outline: none;
+      }
+
+      input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 10px;
+        width: 10px;
+        margin-top: -1px;
+        background: #ffffff;
+        border-radius: 50%; /*外观设置为圆形*/
+        border: solid 1px grey;
+      }
+    }
+
+    > .progress-wrapper {
+      position: relative;
+
+      margin-left: 5rem;
+      margin-right: 5rem;
+
+      > span.time-now {  // 当前播放时间
+        position: absolute;
+        top: -5px;
+        left: -5rem;
+
+        display: inline-block;
+        vertical-align: top;
+        height: 1rem;
+        width: 5rem;
+
+        text-align: center;
+        font-size: .9rem;
+      }
+
+      > span.time-total {  // 总共的时间
+        position: absolute;
+        top: -5px;
+        right: -5rem;
+
+        height: 1rem;
+        width: 5rem;
+        display: inline-block;
+        vertical-align: top;
+
+        text-align: center;
+        font-size: .9rem;
+      }
+    }
+  }
+}

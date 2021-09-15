@@ -1,0 +1,13 @@
+{
+  "name": "@nojsja/infinite-scroll",
+  "version": "0.0.1",
+  "description": "An infinite scrolling component powered by react.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "nojsja",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

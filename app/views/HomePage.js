@@ -5,11 +5,11 @@ import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
 // import EditableTree from 'editable-tree-antd';
-import EditableTree from 'components/EditableTree/lib';
-import SourceTree from 'components/TreeView';
-import AudioPreview from 'components/AudioPreview';
-import InfiniteScroll from 'components/InfiniteScroll/index';
-import ModalWindow from 'components/ModalWindow';
+import EditableTree from '@nojsja/editable-tree-antd';
+import SourceTree from '@nojsja/semantic-tree-view';
+import AudioPreview from '@nojsja/audio-preview';
+import InfiniteScroll from '@nojsja/infinite-scroll';
+import ModalWindow from '@nojsja/modal-window';
 
 import { history } from '../App';
 

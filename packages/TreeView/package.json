@@ -1,0 +1,13 @@
+{
+  "name": "@nojsja/semantic-tree-view",
+  "version": "0.0.1",
+  "description": "An tree component powered by semantic and react.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "nojsja",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
