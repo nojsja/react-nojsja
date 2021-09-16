@@ -4,7 +4,6 @@
   "description": "An editable treeview component based on antd and powered by react.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "",
     "clean": "rm lib/* -rf",
     "compile": "npm run clean && babel src --out-dir lib && cp ./src/styles/* ./lib/styles/ -rf"
   },

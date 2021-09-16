@@ -4,7 +4,6 @@ import { inject, observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
-// import EditableTree from 'editable-tree-antd';
 import EditableTree from '@nojsja/editable-tree-antd';
 import SourceTree from '@nojsja/semantic-tree-view';
 import AudioPreview from '@nojsja/audio-preview';
