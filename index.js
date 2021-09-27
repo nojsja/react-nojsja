@@ -23,6 +23,6 @@ render(
 
 if (module.hot) {
   module.hot.accept('./app/App', () => {
-      render(require('./app/App').default)
+      render(import('./app/App'))
   })
 }
