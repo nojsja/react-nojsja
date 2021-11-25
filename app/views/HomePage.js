@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
-import { Divider, Button } from 'antd';
+import { Divider, Button, Form } from 'antd';
 import { inject, observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
-// import EditableTree from 'editable-tree-antd';
+// import EditableTree from 'editable-tree-Antd';
 import EditableTree from 'components/EditableTree/lib';
+import EditableTable from 'components/EditableTable';
+import HorizontalTable from 'components/HorizontalTable';
+import FragmentHeader from 'components/FragmentHeader';
 import SourceTree from 'components/TreeView';
 import AudioPreview from 'components/AudioPreview';
 import InfiniteScroll from 'components/InfiniteScroll/index';
 import ModalWindow from 'components/ModalWindow';
+
+import { data, template } from 'components/EditableTable/data.js';
+import { insureInfoConf, insureGoodsConf, insureInfo, goodsInfo } from 'components/HorizontalTable/data.js';
+import getFragments from 'components/FragmentHeader/data.js';
 
 import { history } from '../App';
 
@@ -44,7 +51,7 @@ class HomePage extends Component {
     return (
       <div className="container-router">
         {/* EditableTree */}
-        <Divider className="divider-nojsja" orientation="right">EditableTree(antd)</Divider>
+        <Divider className="divider-nojsja" orientation="right">EditableTree(Antd)</Divider>
         <div className="content-wrapper">
           <EditableTree
             data={toJS(editableTree.treeData['zh_CN'])}
@@ -55,7 +62,7 @@ class HomePage extends Component {
           />
         </div>
         {/* TreeView */}
-        <Divider className="divider-nojsja" orientation="right">TreeView(semantic)</Divider>
+        <Divider className="divider-nojsja" orientation="right">TreeView(Semantic)</Divider>
         <div className="content-wrapper">
           <SourceTree
             setActiveItem={console.log}
@@ -67,11 +74,47 @@ class HomePage extends Component {
             getChecked={console.log}
           />
         </div>
+        {/* TreeView */}
+        <Divider className="divider-nojsja" orientation="right">EditableTable(Antd)</Divider>
+        <div className="content-wrapper">
+          <EditableTable
+            value={data}
+            templateData={template}
+          />
+        </div>
         {/* AudioPreview */}
-        <Divider className="divider-nojsja" orientation="right">AudioPreview(semantic)</Divider>
+        <Divider className="divider-nojsja" orientation="right">AudioPreview(Semantic)</Divider>
         <div className="content-wrapper">
           <AudioPreview
             dataUrl={audioPlayer.src}
+          />
+        </div>
+        {/* HorizontalTable */}
+        <Divider className="divider-nojsja" orientation="right">HorizontalTable(Antd)</Divider>
+        <div className="content-wrapper">
+          <HorizontalTable
+            title={insureInfoConf.title}
+            columns={insureInfoConf.form}
+            dataSource={insureInfo}
+          />
+          <HorizontalTable
+            title={insureGoodsConf.title}
+            columns={insureGoodsConf.form}
+            dataSource={goodsInfo}
+          />
+        </div>
+        {/* FragmentHeader */}
+        <Divider className="divider-nojsja" orientation="right">FragmentHeader(Antd)</Divider>
+        <div className="content-wrapper">
+          <FragmentHeader
+            // form={/* this.formRef */}
+            fragments={
+              getFragments({
+                search: () => console.log('search'),
+                clear: () => console.log('clear')
+              })
+            }
+            onChange={console.log}
           />
         </div>
         {/* InfiniteScroll */}

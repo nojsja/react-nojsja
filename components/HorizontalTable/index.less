@@ -1,0 +1,45 @@
+@borderColor: #f1f1f1;
+@borderColorDeep: #e6e6e6;
+
+.horizontal-table__wrapper {
+  display: block;
+}
+
+.horizontal-table__header {
+  margin-bottom: 0;
+  padding: 6px 6px;
+  font-weight: bold;
+  background-color: #fafafa;
+  border-bottom: solid 1px @borderColorDeep;
+}
+
+.horizontal-table__body {
+  display: block;
+}
+
+.horizontal-table__body__row {
+  box-sizing: border-box;
+  border: 0;
+}
+
+.horizontal-table__body__row-fill {
+  height: 100%;
+}
+
+.horizontal-table__body__row-label {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 6px 6px;
+  background-color: #f3fbfe;
+  border-bottom: solid 1px @borderColorDeep;
+  border-left: solid 1px @borderColor;
+}
+
+.horizontal-table__body__row-wrapper {
+  box-sizing: border-box;
+  padding: 6px 6px;
+  border-right: solid 1px @borderColor;
+  border-bottom: solid 1px @borderColor;
+  border-left: solid 1px @borderColor;
+}
