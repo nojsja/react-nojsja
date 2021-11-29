@@ -140,3 +140,28 @@ export const typeCheck = (target, type) => {
   }
   return `${name.slice(0, (limit))}...`;
 };
+
+/* 节流函数 */
+export const throttle = (fn, delay) => {
+  let timer = null;
+  return function(...args) {
+    if (timer) return;
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+      timer = null;
+    }, delay);
+  };
+}
+
+/* 去抖函数 */
+export const debounce = (fn, delay) => {
+  let timer = null;
+  return function(...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
