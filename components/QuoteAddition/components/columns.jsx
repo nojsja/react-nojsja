@@ -6,7 +6,7 @@ import QuiiEditorWraper from '@/components/QuillEditorWrapper';
 import { computeValues } from '../index';
 
 export default props => {
-  const { onTableChange, setAllChecked, allChecked, disabled, rows = keys } = props;
+  const { onTableChange, setAllChecked, allChecked, disabled, rows = keys, id } = props;
 
   const columns = {
     acceptInsurance: {
@@ -24,7 +24,7 @@ export default props => {
       dataIndex: 'acceptInsurance',
       key: 'acceptInsurance',
       render: (value, data) => {
-        const now = computeValues.value ? computeValues.value[data.id] : false;
+        const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
         return (
           <Form.Item name={`acceptInsurance_${data.id}`}>
             {!disabled ? (
@@ -59,7 +59,7 @@ export default props => {
               { pattern: costRateReg, message: '承保费率值为十万分之一到1之间的数' },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
-                  const now = computeValues.value ? computeValues.value[data.id] : false;
+                  const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                   console.log('validator');
                   if (now && now.acceptInsurance) {
                     if (!now.insureFeeRate) {
@@ -90,24 +90,24 @@ export default props => {
         );
       },
     },
-    settlementFeeRate: {
+    settlementRate: {
       title: '结算费率',
-      dataIndex: 'settlementFeeRate',
-      key: 'settlementFeeRate',
+      dataIndex: 'settlementRate',
+      key: 'settlementRate',
       render: (value, data) => (
         <Form.Item
-          name={`settlementFeeRate_${data.id}`}
+          name={`settlementRate_${data.id}`}
           validateFirst={true}
           rules={[
             { pattern: costRateReg, message: '结算费率值为十万分之一到1之间的数' },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                const now = computeValues.value ? computeValues.value[data.id] : false;
+                const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                 if (now && now.acceptInsurance) {
-                  if (!now.settlementFeeRate) {
+                  if (!now.settlementRate) {
                     return Promise.reject(new Error('请输入结算费率'));
                   }
-                  if (!costRateReg.test(now.settlementFeeRate)) {
+                  if (!costRateReg.test(now.settlementRate)) {
                     return Promise.reject(new Error('结算费率值为十万分之一到1之间的数'));
                   }
                 }
@@ -120,35 +120,35 @@ export default props => {
             <InputNumber
               step={0.01}
               disabled={disabled}
-              onChange={value => onTableChange('settlementFeeRate', value, data)}
+              onChange={value => onTableChange('settlementRate', value, data)}
               defaultValue={value}
             />
           ) : (
-            <span>{data.settlementFeeRate}</span>
+            <span>{data.settlementRate}</span>
           )}
           {/* {data.underwritting ? (
           ) : null} */}
         </Form.Item>
       ),
     },
-    cost: {
+    assessAmount: {
       title: '费用',
-      dataIndex: 'cost',
-      key: 'cost',
+      dataIndex: 'assessAmount',
+      key: 'assessAmount',
       render: (value, data) => (
         <Form.Item
-          name={`cost_${data.id}`}
+          name={`assessAmount_${data.id}`}
           validateFirst={true}
           rules={[
             { pattern: positiveReg, message: '费用值为正数' },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                const now = computeValues.value ? computeValues.value[data.id] : false;
+                const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                 if (now && now.acceptInsurance) {
-                  if (!now.cost) {
+                  if (!now.assessAmount) {
                     return Promise.reject(new Error('请输入费用'));
                   }
-                  if (!positiveReg.test(computeValues.value[data.id].cost)) {
+                  if (!positiveReg.test(computeValues.get(id)[data.id].assessAmount)) {
                     return Promise.reject(new Error('费用值为正数'));
                   }
                 }
@@ -163,31 +163,31 @@ export default props => {
               disabled={disabled}
               defaultValue={value}
               addonAfter="RMB"
-              onChange={value => onTableChange('cost', value, data)}
+              onChange={value => onTableChange('assessAmount', value, data)}
             />
           ) : (
-            <span>{data.cost}</span>
+            <span>{data.assessAmount}</span>
           )}
         </Form.Item>
       ),
     },
-    insureType: {
+    policyType: {
       title: '险别',
-      dataIndex: 'insureType',
-      key: 'insureType',
+      dataIndex: 'policyType',
+      key: 'policyType',
       render: (value, data) => {
         return (
           <Form.Item
-            name={`insureType_${data.id}`}
+            name={`policyType_${data.id}`}
             rules={[
               ({ getFieldValue }) => ({
                 validator(rule, value) {
-                  const now = computeValues.value ? computeValues.value[data.id] : false;
+                  const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                   if (now && now.acceptInsurance) {
-                    if (!now.insureType) {
+                    if (!now.policyType) {
                       return Promise.reject(new Error('请输入险别'));
                     }
-                    if (!illegalCharReg.test(now.insureType)) {
+                    if (!illegalCharReg.test(now.policyType)) {
                       return Promise.reject(new Error('存在非法字符'));
                     }
                   }
@@ -199,30 +199,30 @@ export default props => {
             {!disabled ? (
               <Input
                 disabled={disabled}
-                onChange={e => onTableChange('insureType', e.target.value, data)}
-                defaultValue={data.insureType}
+                onChange={e => onTableChange('policyType', e.target.value, data)}
+                defaultValue={data.policyType}
               />
             ) : (
-              <span>{data.insureType}</span>
+              <span>{data.policyType}</span>
             )}
           </Form.Item>
         );
       },
     },
-    payFree: {
+    freeCompe: {
       title: '免赔',
-      dataIndex: 'payFree',
-      key: 'payFree',
+      dataIndex: 'freeCompe',
+      key: 'freeCompe',
       render: (value, data) => {
         return (
           <Form.Item
-            name={`payFree_${data.id}`}
+            name={`freeCompe_${data.id}`}
             rules={[
               ({ getFieldValue }) => ({
                 validator(rule, value) {
-                  const now = computeValues.value ? computeValues.value[data.id] : false;
+                  const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                   if (now && now.acceptInsurance) {
-                    if (!now.payFree) {
+                    if (!now.freeCompe) {
                       return Promise.reject(new Error('请输入免赔政策'));
                     }
                   }
@@ -231,37 +231,29 @@ export default props => {
               }),
             ]}
           >
-            {!disabled ? (
-              <QuiiEditorWraper
-                disabled={false}
-                onChange={value => onTableChange('payFree', value, data)}
-                value={data.payFree}
-              />
-            ) : (
-              <QuiiEditorWraper
-                disabled={true}
-                onChange={value => onTableChange('payFree', value, data)}
-                value={data.payFree}
-              />
-            )}
+            <QuiiEditorWraper
+              disabled={disabled}
+              onChange={value => onTableChange('freeCompe', value, data)}
+              defaultValue={data.freeCompe}
+            />
           </Form.Item>
         );
       },
     },
-    specialAgreement: {
+    convention: {
       title: '特别约定',
-      dataIndex: 'specialAgreement',
-      key: 'specialAgreement',
+      dataIndex: 'convention',
+      key: 'convention',
       render: (value, data) => {
         return (
           <Form.Item
-            name={`specialAgreement_${data.id}`}
+            name={`convention_${data.id}`}
             rules={[
               ({ getFieldValue }) => ({
                 validator(rule, value) {
-                  const now = computeValues.value ? computeValues.value[data.id] : false;
+                  const now = computeValues.get(id) ? computeValues.get(id)[data.id] : false;
                   if (now && now.acceptInsurance) {
-                    if (!now.specialAgreement) {
+                    if (!now.convention) {
                       return Promise.reject(new Error('请输入特别约定'));
                     }
                   }
@@ -270,19 +262,11 @@ export default props => {
               }),
             ]}
           >
-            {!disabled ? (
-              <QuiiEditorWraper
-                disabled={false}
-                onChange={value => onTableChange('specialAgreement', value, data)}
-                value={data.specialAgreement}
-              />
-            ) : (
-              <QuiiEditorWraper
-                disabled={true}
-                onChange={value => onTableChange('specialAgreement', value, data)}
-                value={data.specialAgreement}
-              />
-            )}
+            <QuiiEditorWraper
+              disabled={disabled}
+              onChange={value => onTableChange('convention', value, data)}
+              defaultValue={data.freeCompe}
+            />
           </Form.Item>
         );
       },
@@ -306,6 +290,6 @@ export const keys = [
   'acceptInsurance',
   'insureFeeRate',
   'minInsureFee',
-  'settlementFeeRate',
-  'insureType',
+  'settlementRate',
+  'policyType',
 ];

@@ -42,17 +42,34 @@ export default function index(props) {
   // 使用不可变对象不会触发编辑器组件的重复渲染
   const valueRef = React.useRef(props.value);
 
-  // 去抖函数用于快速输入字符时造成编辑器组件重渲染的卡顿优化
-  const debounceChange = useCallback(debounce((...args) => {
-    fnRef.current(...args);
-  }, 300), []);
+  /* effects */
+
+  useEffect(() => {
+    if (props.value === undefined) {
+      valueRef.current = props.defaultValue;
+    }
+  }, []);
 
   // 用于传入的编辑器文本变化时更新内部独立状态
   useEffect(() => {
-    if (props.value && (props.value !== valueRef.current)) {
+    if (props.value && props.value !== valueRef.current) {
       valueRef.current = props.value;
     }
+
+    if (props.value === undefined) {
+      valueRef.current = props.defaultValue;
+    }
   }, [props.value]);
+
+  /* handlers */
+
+  // 去抖函数用于快速输入字符时造成编辑器组件重渲染的卡顿优化
+  const debounceChange = useCallback(
+    debounce((...args) => {
+      fnRef.current(...args);
+    }, 300),
+    [],
+  );
 
   // 每次渲染时更新各个不可变对象的正确指向
   fnRef.current = props.onChange;
@@ -60,7 +77,7 @@ export default function index(props) {
     const data = quillEmptyReg.test(value) ? '' : value;
     valueRef.current = data;
     if (props.onChange) {
-      debounceChange(data, name)
+      debounceChange(data, name);
     }
   };
 

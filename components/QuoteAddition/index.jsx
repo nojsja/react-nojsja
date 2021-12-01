@@ -1,27 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Button, Row, Col, Divider, Form } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Button, Message, Form } from 'antd';
 import { connect } from 'dva';
 
 import getColumns, { keys } from './components/columns';
 import style from '@/pages/index.less';
+import { getRandomString } from '@/utils/utils';
 
-export const editValues = {
-  value: null,
-};
+// 编辑值
+export const editValues = new Map();
 
 // 计算值
-export const computeValues = {
-  value: null,
-};
+export const computeValues = new Map();
 
-const getComputeValues = values => {
-  if (values && values.length) {
-    computeValues.value = values.reduce((pre, cur) => {
-      pre[cur.id] = cur;
-      return pre;
-    }, {});
+const getComputeValues = (values, id) => {
+  if (values.get(id) && values.get(id).length) {
+    computeValues.set(
+      id,
+      values.get(id).reduce((pre, cur) => {
+        pre[cur.id] = cur;
+        return pre;
+      }, {}),
+    );
   } else {
-    computeValues.value = null;
+    computeValues.delete(id);
   }
 };
 
@@ -37,11 +38,11 @@ const formatCompany = companys => {
           id: `${branch.psCompanyId}-${branch.psBranchId}`,
           acceptInsurance: false,
           insureFeeRate: '',
-          settlementFeeRate: '',
-          cost: '',
-          insureType: '',
-          payFree: '',
-          specialAgreement: '',
+          settlementRate: '',
+          assessAmount: '',
+          policyType: '',
+          freeCompe: '',
+          convention: '',
         });
       }
     });
@@ -54,22 +55,23 @@ const fullKeys = [
   'company',
   'acceptInsurance',
   'insureFeeRate',
-  'settlementFeeRate',
-  'cost',
-  'insureType',
-  'payFree',
-  'specialAgreement',
+  'settlementRate',
+  'assessAmount',
+  'policyType',
+  'freeCompe',
+  'convention',
 ];
 
 const mapStateToProps = state => ({
   companys: state.common.selectInfo.insuranceCompany,
+  userInfo: state.employee.userInfo,
 });
 
 export default connect(mapStateToProps)(function(props) {
-  let { form } = props;
+  let { form, addState } = props;
   const {
     value,
-    dispatch,
+    userInfo,
     templateData = [],
     mode = 'full',
     disabled,
@@ -82,21 +84,14 @@ export default connect(mapStateToProps)(function(props) {
   const [template, setTemplate] = useState(formatCompany(companysData));
   const [status, setStatus] = useState('view');
   const [allChecked, setAllChecked] = useState(false);
+  // 唯一id
+  const id = useRef(getRandomString()).current;
 
   // 编辑模式
   const isEdit = status === 'edit';
   const isView = status === 'view';
 
   /* hooks */
-
-  // 回调设置Form.Item数据
-  const onChange = value => {
-    console.log('onChange', value);
-    setTableData(value);
-    if (props.onChange) {
-      props.onChange(value);
-    }
-  };
 
   // 组件挂载后获取初始模板数据
   useEffect(() => {
@@ -111,6 +106,11 @@ export default connect(mapStateToProps)(function(props) {
         setTableData(getTableData(value && value.length ? value : [], template));
       }
     }
+
+    return () => {
+      editValues.delete(id);
+      getComputeValues(editValues, id);
+    };
   }, []);
 
   // 更新模板公司
@@ -124,6 +124,7 @@ export default connect(mapStateToProps)(function(props) {
       getColumns({
         rows: fullKeys,
         onTableChange,
+        id,
         setAllChecked: setAllCheckedAction,
         allChecked,
         disabled: isView,
@@ -140,54 +141,62 @@ export default connect(mapStateToProps)(function(props) {
 
   /* handlers */
 
+  // 回调设置Form.Item数据
+  const onChange = value => {
+    console.log('onChange', value);
+    setTableData(value);
+    if (props.onChange) {
+      props.onChange(value);
+    }
+  };
+
   // 选择所有承保项
   const setAllCheckedAction = status => {
-    editValues.value = editValues.value
-      ? editValues.value.map(item => {
+    if (editValues.has(id)) {
+      editValues.set(
+        id,
+        editValues.get(id).map(item => {
           item.acceptInsurance = status;
           return item;
-        })
-      : null;
+        }),
+      );
+    }
     setAllChecked(status);
-    getComputeValues(editValues.value);
-    if (editValues.value) {
-      form.resetFields(editValues.value.map(item => `acceptInsurance_${item.id}`));
+    getComputeValues(editValues, id);
+    if (editValues.has(id)) {
+      form.resetFields(editValues.get(id).map(item => `acceptInsurance_${item.id}`));
     }
   };
 
   // 根据模板数据和当前数据生成表格数据
-  const getTableData = (datas, costRate) => {
+  const getTableData = (datas, assessAmountRate) => {
     datas.forEach(pr => {
-      costRate.forEach(co => {
+      assessAmountRate.forEach(co => {
         if (co.id === `${pr.psCompanyId}-${pr.psBranchId}`) {
-          co.specialAgreement = pr.specialAgreement;
-          co.cost = pr.cost;
-          co.payFree = pr.payFree;
+          co.convention = pr.convention;
+          co.assessAmount = pr.assessAmount;
+          co.freeCompe = pr.freeCompe;
           co.insureFeeRate = pr.insureFeeRate;
-          co.settlementFeeRate = pr.settlementFeeRate;
-          co.insureType = pr.insureType;
+          co.settlementRate = pr.settlementRate;
+          co.policyType = pr.policyType;
           co.acceptInsurance = pr.acceptInsurance;
         }
       });
     });
 
-    return costRate;
+    return assessAmountRate;
   };
 
   // 保存编辑
   const saveEdit = () => {
-    console.time('saveEdit');
     form
       .validateFields()
       .then(values => {
-        console.timeEnd('saveEdit');
         setStatus('view');
-        onChange(editValues.value || tableData);
-        editValues.value = null;
-        getComputeValues(editValues.value);
+        onChange(editValues.has(id) ? editValues.get(id) : tableData);
+        props.onSubmit();
       })
       .catch(error => {
-        console.timeEnd('saveEdit');
         console.log(error);
       });
   };
@@ -195,22 +204,25 @@ export default connect(mapStateToProps)(function(props) {
   // 进入编辑模式
   const setEdit = () => {
     setStatus('edit');
-    editValues.value = tableData;
-    getComputeValues(editValues.value);
+    editValues.set(id, tableData);
+    getComputeValues(editValues, id);
   };
 
   // 取消编辑
   const cancelEdit = id => {
     setStatus('view');
-    editValues.value = null;
-    getComputeValues(editValues.value);
+    editValues.delete(id);
+    getComputeValues(editValues, id);
     form.resetFields();
   };
 
   // 表格字段同步更新
   const onTableChange = (attr, value, data) => {
-    editValues.value = editValues.value || tableData;
-    const modifiedData = editValues.value.map(table => {
+    console.log(attr, value, id);
+    if (!editValues.has(id)) {
+      editValues.set(id, tableData);
+    }
+    const modifiedData = editValues.get(id).map(table => {
       if (table.id === data.id) {
         return {
           ...table,
@@ -222,15 +234,13 @@ export default connect(mapStateToProps)(function(props) {
       return table;
     });
 
-    editValues.value = modifiedData;
-    getComputeValues(editValues.value);
+    editValues.set(id, modifiedData);
+    getComputeValues(editValues, id);
   };
-
-  console.log(tableData);
 
   return (
     <div className={props.className}>
-      <div>
+      <div className={style['margin__bottom__12']}>
         {!disabled && (
           <>
             {status === 'view' && (
