@@ -184,11 +184,26 @@ export default class TreeNode extends Component {
 
 
   render() {
-    const { treeData, maxLevel, enableYaml, lang } = this.props;
+    const { treeData, maxLevel, enableYaml, lang, enableEdit } = this.props;
     const editValueInputVisible = !(treeData.nodeValue instanceof Array);
-    const editNameInputVisible = (!treeData.nodeName && !treeData.nodeValue) || treeData.nodeName || (treeData.nodeValue && typeCheck(treeData.nodeValue, 'array'));
-    const actionAddNodeVisible = (treeData.nodeValue || treeData.nodeName) && (!treeData.nodeValue || treeData.nodeValue instanceof Array);
+    const editNameInputVisible =
+      (!treeData.nodeName && !treeData.nodeValue) ||
+      treeData.nodeName ||
+      (treeData.nodeValue && typeCheck(treeData.nodeValue, 'array'))
+    ;
+    const isColonVisible =
+      (treeData.nodeName && treeData.nodeValue) && (
+        !typeCheck(treeData.nodeValue, 'array') ||
+        typeCheck(treeData.nodeValue, 'string')
+      )
+    ;
+
+    const actionAddNodeVisible =
+      (treeData.nodeValue || treeData.nodeName) &&
+      (!treeData.nodeValue || treeData.nodeValue instanceof Array)
+    ;
     const depthOverflow = treeData.depth >= maxLevel;
+
     return (
       <Row
         key={treeData.key}
@@ -199,12 +214,14 @@ export default class TreeNode extends Component {
           show={treeData.yaml && treeData.isInEdit && enableYaml}
           onNodeValueChange={this.onNodeValueChange}
           editYamlConfirm={this.editYamlConfirm}
+          isColonVisible={isColonVisible}
           editCancel={this.editCancel}
           lang={lang}
         />
         <TreeNodeNormalEditing
           show={!treeData.yaml && treeData.isInEdit}
           editValueInputVisible={editValueInputVisible}
+          isColonVisible={isColonVisible}
           onNodeNameChange={this.onNodeNameChange}
           treeData={treeData}
           onNodeValueChange={this.onNodeValueChange}
@@ -214,9 +231,11 @@ export default class TreeNode extends Component {
         />
         <TreeNodeDisplay
           editNameInputVisible={editNameInputVisible}
+          isColonVisible={isColonVisible}
           treeData={treeData}
           getInToEditable={this.getInToEditable}
           editValueInputVisible={editValueInputVisible}
+          enableEdit={enableEdit}
           lang={lang}
         />
         <TreeNodeActions
@@ -229,6 +248,7 @@ export default class TreeNode extends Component {
           nodeDeletable={treeData.nodeDeletable}
           depthOverflow={depthOverflow}
           enableYaml={enableYaml}
+          enableEdit={enableEdit}
           isInEdit={treeData.isInEdit}
           lang={lang}
         />

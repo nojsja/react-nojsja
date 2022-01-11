@@ -4,6 +4,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 export default function TreeNodeNormalEditing({
   onNodeNameChange,
+  isColonVisible,
   editValueInputVisible,
   treeData,
   onNodeValueChange,
@@ -24,7 +25,7 @@ export default function TreeNodeNormalEditing({
             defaultValue={treeData.nodeName}
           />
         </span>
-        ：
+        { isColonVisible && <span>：</span> }
         {
           (editValueInputVisible) &&
           (<span>

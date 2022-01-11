@@ -81,6 +81,7 @@ import EditableTree from 'editable-tree-antd';
   data={treeData} // see demo data above
   maxLevel={10} // tree max level limitation, default 50
   enableYaml={true} // enable parse yaml string, default false
+  enableEdit={true} // enable tree edit, default true
   lang="en_US" // default zh_CN
   onDataChange={this.onDataChange} // data change listener
 />

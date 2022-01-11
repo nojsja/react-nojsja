@@ -5,7 +5,7 @@ import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
 // import EditableTree from 'editable-tree-Antd';
-import EditableTree from 'components/EditableTree/lib';
+import EditableTree from 'components/EditableTree/src';
 import EditableTable from 'components/EditableTable';
 import HorizontalTable from 'components/HorizontalTable';
 import FragmentHeader from 'components/FragmentHeader';
@@ -57,6 +57,7 @@ class HomePage extends Component {
             data={toJS(editableTree.treeData['zh_CN'])}
             maxLevel={10}
             enableYaml={true}
+            enableEdit={true}
             lang="zh_CN"
             onDataChange={this.onDataChange}
           />

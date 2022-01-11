@@ -4,7 +4,9 @@ import { longNameFormatterNoTail } from './utils';
 
 export default function TreeNodeDisplay({
   editNameInputVisible,
+  isColonVisible,
   treeData,
+  enableEdit,
   getInToEditable,
   editValueInputVisible,
   lang,
@@ -17,20 +19,20 @@ export default function TreeNodeDisplay({
         (<span attr-key={treeData.key}>
           <Tooltip placement="bottom" title={(treeData.nodeName || '').length > 50 ? treeData.nodeName : ''}>
             <span
-              onClick={(treeData.nameEditable) ? getInToEditable : undefined}
+              onClick={(enableEdit && treeData.nameEditable) &&  getInToEditable}
               className="editable-tree-label normal-text"
             >{longNameFormatterNoTail(treeData.nodeName || '')}
             </span>
           </Tooltip>
         </span>)
       }
-      { editNameInputVisible && <span>：</span> }
+      { isColonVisible && <span>：</span> }
       {
         editValueInputVisible &&
           <span>
             <Tooltip placement="bottom" title={(treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''}>
               <span
-                onClick={getInToEditable}
+                onClick={ (enableEdit) && getInToEditable}
                 className="editable-tree-label normal-text"
               >{longNameFormatterNoTail(treeData.nodeValue || '')}
               </span>

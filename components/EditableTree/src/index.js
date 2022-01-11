@@ -15,6 +15,7 @@ class EditableTree extends Component {
     treeData: [],
     expandedKeys: [],
     enableYaml: false,
+    enableEdit: true,
     maxLevel: 50,
     lang: 'zh_CN'
   };
@@ -23,7 +24,7 @@ class EditableTree extends Component {
   key=getRandomString()
 
   componentDidMount() {
-    const { data, maxLevel = 50, enableYaml, lang="zh_CN" } = this.props;
+    const { data, maxLevel = 50, enableYaml, enableEdit=true, lang="zh_CN" } = this.props;
     if (data) {
       this.dataOrigin = data;
       // default value wrapper
@@ -37,6 +38,7 @@ class EditableTree extends Component {
         treeData: formattedData,
         expandedKeys: keys,
         enableYaml: !!enableYaml,
+        enableEdit: !!enableEdit,
         maxLevel: maxLevel,
         lang
       });
@@ -44,9 +46,9 @@ class EditableTree extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data, maxLevel = 50, enableYaml, lang="zh_CN" } = nextProps;
+    const { data, maxLevel = 50, enableYaml, enableEdit=true, lang="zh_CN" } = nextProps;
 
-    this.setState({ enableYaml: !!enableYaml, lang, maxLevel });
+    this.setState({ enableYaml: !!enableYaml, lang, enableEdit: !!enableEdit, maxLevel });
 
     try {
       if (
@@ -144,6 +146,7 @@ class EditableTree extends Component {
           maxLevel={this.state.maxLevel}
           treeData={treeData}
           enableYaml={this.state.enableYaml}
+          enableEdit={this.state.enableEdit}
           modifyNode={this.modifyNode}
           addSisterNode={this.addSisterNode}
           addExpandedKey={this.addExpandedKey}
@@ -238,6 +241,7 @@ EditableTree.propTypes = {
   maxLevel: PropTypes.number, // tree max level, default 50
   lang: PropTypes.string, // lang - zh_CN/en_US, default zh_CN
   enableYaml: PropTypes.bool, // enable it if you want to parse yaml string when adding a new node, default false
+  enableEdit: PropTypes.bool, // disable it if you want to disable tree edit , default true
 };
 
 export default EditableTree;
