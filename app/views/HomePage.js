@@ -5,7 +5,7 @@ import { toJS } from 'mobx';
 import PropTypes from 'prop-types';
 
 // import EditableTree from 'editable-tree-Antd';
-import EditableTree from 'components/EditableTree/src';
+import EditableTree from 'components/EditableTree';
 import EditableTable from 'components/EditableTable';
 import HorizontalTable from 'components/HorizontalTable';
 import FragmentHeader from 'components/FragmentHeader';
@@ -19,6 +19,7 @@ import { insureInfoConf, insureGoodsConf, insureInfo, goodsInfo } from 'componen
 import getFragments from 'components/FragmentHeader/data.js';
 
 import { history } from '../App';
+import { getRandomString } from '../../components/EditableTree/src/utils';
 
 @inject('pub', 'demo')
 @observer
@@ -37,6 +38,28 @@ class HomePage extends Component {
 
   onDataChange = (data) => {
     console.log(`tree changed: `, data);
+  }
+
+  loadData = (node) => {
+    console.log(node); // the parent node you clicked to expand
+    const data = [ // the child nodes array
+      {
+        nodeName: 'x', // child node name
+        nodeValue: 'x-value', // child node value
+        id: getRandomString()
+      },
+      // {
+      //   nodeName: 'x2',
+      //   nodeValue: 'x2-value', // child node value
+      //   id: '[unique id]',
+      // },
+    ];
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(data);
+      }, 1000);
+    });
   }
 
   render() {
@@ -58,6 +81,8 @@ class HomePage extends Component {
             maxLevel={10}
             enableYaml={true}
             enableEdit={true}
+            defaultExpandAll={false}
+            // loadData={this.loadData}
             lang="zh_CN"
             onDataChange={this.onDataChange}
           />

@@ -1,6 +1,6 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -45,9 +45,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
@@ -82,7 +82,9 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       treeData: [],
       expandedKeys: [],
       enableYaml: false,
+      enableEdit: true,
       maxLevel: 50,
+      defaultExpandAll: true,
       lang: 'zh_CN'
     };
     _this.dataOrigin = [];
@@ -133,6 +135,16 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       }, _this.onDataChange(_this.dataOrigin));
     };
 
+    _this.setNodeChildren = function (key, children) {
+      var modifiedData = _this.treeModel.setNodeChildren(key, children);
+
+      _Tree["default"].levelDepthWrapper(_this.dataOrigin);
+
+      _this.setState({
+        treeData: _this.formatTreeData(modifiedData)
+      }, _this.onDataChange(_this.dataOrigin));
+    };
+
     _this.addNodeFragment = function (key, props) {
       var modifiedData = _this.treeModel.addNodeFragment(key, props);
 
@@ -170,6 +182,7 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           maxLevel: _this.state.maxLevel,
           treeData: treeData,
           enableYaml: _this.state.enableYaml,
+          enableEdit: _this.state.enableEdit,
           modifyNode: _this.modifyNode,
           addSisterNode: _this.addSisterNode,
           addExpandedKey: _this.addExpandedKey,
@@ -225,6 +238,19 @@ var EditableTree = /*#__PURE__*/function (_Component) {
       });
     };
 
+    _this.loadData = function (node) {
+      console.log(node);
+      var _this$props$loadData = _this.props.loadData,
+          loadData = _this$props$loadData === void 0 ? function () {} : _this$props$loadData;
+      return Promise.resolve(loadData(node)).then(function (data) {
+        if (data) {
+          data = (0, _utils.typeCheck)(data, 'array') ? data : [data];
+
+          _this.setNodeChildren(node.key, data);
+        }
+      });
+    };
+
     _this.addExpandedKey = function (key) {
       key = key instanceof Array ? key : [key];
 
@@ -250,8 +276,13 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           _this$props$maxLevel = _this$props.maxLevel,
           maxLevel = _this$props$maxLevel === void 0 ? 50 : _this$props$maxLevel,
           enableYaml = _this$props.enableYaml,
+          _this$props$enableEdi = _this$props.enableEdit,
+          enableEdit = _this$props$enableEdi === void 0 ? true : _this$props$enableEdi,
           _this$props$lang = _this$props.lang,
-          lang = _this$props$lang === void 0 ? "zh_CN" : _this$props$lang;
+          lang = _this$props$lang === void 0 ? "zh_CN" : _this$props$lang,
+          _this$props$defaultEx = _this$props.defaultExpandAll,
+          defaultExpandAll = _this$props$defaultEx === void 0 ? true : _this$props$defaultEx;
+      var expandedKeys = this.state.expandedKeys;
 
       if (data) {
         this.dataOrigin = data; // default value wrapper
@@ -271,8 +302,10 @@ var EditableTree = /*#__PURE__*/function (_Component) {
         this.onDataChange(this.dataOrigin);
         this.setState({
           treeData: formattedData,
-          expandedKeys: keys,
+          expandedKeys: defaultExpandAll ? keys : expandedKeys,
           enableYaml: !!enableYaml,
+          enableEdit: !!enableEdit,
+          defaultExpandAll: !!defaultExpandAll,
           maxLevel: maxLevel,
           lang: lang
         });
@@ -285,11 +318,17 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           _nextProps$maxLevel = nextProps.maxLevel,
           maxLevel = _nextProps$maxLevel === void 0 ? 50 : _nextProps$maxLevel,
           enableYaml = nextProps.enableYaml,
+          _nextProps$enableEdit = nextProps.enableEdit,
+          enableEdit = _nextProps$enableEdit === void 0 ? true : _nextProps$enableEdit,
           _nextProps$lang = nextProps.lang,
           lang = _nextProps$lang === void 0 ? "zh_CN" : _nextProps$lang;
+      var _this$state = this.state,
+          defaultExpandAll = _this$state.defaultExpandAll,
+          expandedKeys = _this$state.expandedKeys;
       this.setState({
         enableYaml: !!enableYaml,
         lang: lang,
+        enableEdit: !!enableEdit,
         maxLevel: maxLevel
       });
 
@@ -313,7 +352,7 @@ var EditableTree = /*#__PURE__*/function (_Component) {
           this.onDataChange(this.dataOrigin);
           this.setState({
             treeData: formattedData,
-            expandedKeys: keys
+            expandedKeys: defaultExpandAll ? keys : expandedKeys
           });
         }
       } catch (error) {
@@ -325,15 +364,19 @@ var EditableTree = /*#__PURE__*/function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var treeData = this.state.treeData;
+      var _this$state2 = this.state,
+          treeData = _this$state2.treeData,
+          defaultExpandAll = _this$state2.defaultExpandAll,
+          expandedKeys = _this$state2.expandedKeys;
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "editable-tree-wrapper"
       }, treeData && treeData.length ? /*#__PURE__*/_react["default"].createElement(_antd.Tree, {
         showLine: true,
         onExpand: this.onExpand,
-        expandedKeys: this.state.expandedKeys // defaultExpandedKeys={this.state.expandedKeys}
+        expandedKeys: expandedKeys,
+        loadData: this.loadData // defaultExpandedKeys={this.state.expandedKeys}
         ,
-        defaultExpandAll: true,
+        defaultExpandAll: defaultExpandAll,
         treeData: treeData
       }) : null);
     }
@@ -347,11 +390,17 @@ EditableTree.propTypes = {
   // tree data, required
   onDataChange: _propTypes["default"].func,
   // data change callback, default none
+  loadData: _propTypes["default"].func,
+  // load data callback, default none
   maxLevel: _propTypes["default"].number,
   // tree max level, default 50
   lang: _propTypes["default"].string,
   // lang - zh_CN/en_US, default zh_CN
-  enableYaml: _propTypes["default"].bool // enable it if you want to parse yaml string when adding a new node, default false
+  enableYaml: _propTypes["default"].bool,
+  // enable it if you want to parse yaml string when adding a new node, default false
+  enableEdit: _propTypes["default"].bool,
+  // disable it if you want to disable tree edit , default true
+  defaultExpandAll: _propTypes["default"].bool // default expand all nodes, default true
 
 };
 var _default = EditableTree;

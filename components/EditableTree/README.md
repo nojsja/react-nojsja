@@ -5,6 +5,15 @@ An editable tree component based on antd tree and powered by react.
 #### Preview
 ![EditableTree](https://raw.githubusercontent.com/nojsja/react-nojsja/master/components/EditableTree/resources/EditableTree.jpg)
 
+#### Features 
+
+- Add sub nodes
+- Add sister nodes
+- Parse and insert yaml nodes
+- Edit node name and node value
+- Load nodes asynchronously
+- Supported languages: en_US / zh_CN
+
 #### Env
 Working with `React^16.13.0` and `Antd^4.6.3`, please confirm to install them first.
 
@@ -25,12 +34,40 @@ The max tree level depth, default 50.
 * enableYaml [Boolean]  
 Enable input yaml string, default false.
 
+* defaultExpandAll [Boolean]  
+Expand all nodes, default true.
+
 * onDataChange [Function]  
 Get treeData when data changed.
 
 * lang [String]  
-lang env: `zh_CN` | `en_US`, default `zh_CN`
+lang env: `zh_CN` | `en_US`, default `zh_CN`.
 
+* loadData [Function]  
+Set option - `defaultExpandAll` to false and Load the children of node element asynchronously.
+```javascript
+function loadData(node) {
+  console.log(node); // the parent node you clicked to expand
+  const data = [ // the child nodes array
+    {
+      nodeName: 'x', // child node name
+      nodeValue: 'x-value', // child node value
+      id: '[unique id]', // child node unique id
+    },
+    {
+      nodeName: 'x2',
+      nodeValue: 'x2-value', // child node value
+      id: '[unique id]',
+    },
+  ];
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(data);
+    }, 1000);
+  });
+}
+```
 
 #### Usage
 A full [demo](https://github.com/nojsja/react-nojsja)
@@ -82,6 +119,8 @@ import EditableTree from 'editable-tree-antd';
   maxLevel={10} // tree max level limitation, default 50
   enableYaml={true} // enable parse yaml string, default false
   enableEdit={true} // enable tree edit, default true
+  defaultExpandAll={true} // expand all nodes, default true
+  // loadData={this.loadData} // load the children of node element asynchronously.
   lang="en_US" // default zh_CN
   onDataChange={this.onDataChange} // data change listener
 />

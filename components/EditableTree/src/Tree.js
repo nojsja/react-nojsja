@@ -543,6 +543,51 @@ export default class Tree {
     return isValid ? this.getTreeData() : null;
   }
 
+  /* set node children */
+  setNodeChildren(key, children=[]) {
+    const level = Tree.getTargetLevel(this.treeData, key);
+    if ((level + 1) > this.maxLevel) {
+      message.warning({ content: this.overLevelTips + this.maxLevel, top: 24, container: () => document.body });
+      return this.getTreeData();
+    }
+    if (Tree.findInEdit(this.treeData)) {
+      message.warning({ content: this.completeEditingNodeTips, top: 24, container: () => document.body });
+      return this.getTreeData();
+    }
+
+    this.setNodeChildrenNow(
+      this.treeData,
+      children.map(item => ({
+        nodeName: "",
+        nodeValue: "",
+        nameEditable: true,
+        valueEditable: true,
+        nodeDeletable: true,
+        isInEdit: false,
+        yaml: false,
+        ...item,
+        key: `${this.treeKey}_${item.id || getRandomString()}`
+      })),
+      key
+    );
+    return this.getTreeData();
+  }
+
+  setNodeChildrenNow(nodeArray, children=[], key) {
+    let node;
+    for (let i = nodeArray.length - 1; i >= 0; i--) {
+      node = nodeArray[i];
+      if (node.key === key) {
+        node.nodeValue = children;
+        break;
+      }
+      if (node.nodeValue && node.nodeValue instanceof Array) {
+        this.setNodeChildrenNow(node.nodeValue, children, key);
+      }
+    }
+  }
+
+
   removeOneNode(key, nodeArray) {
     let node;
     let j;

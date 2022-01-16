@@ -15,6 +15,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function TreeNodeNormalEditing(_ref) {
   var onNodeNameChange = _ref.onNodeNameChange,
+      isColonVisible = _ref.isColonVisible,
       editValueInputVisible = _ref.editValueInputVisible,
       treeData = _ref.treeData,
       onNodeValueChange = _ref.onNodeValueChange,
@@ -28,7 +29,7 @@ function TreeNodeNormalEditing(_ref) {
     size: "small",
     onChange: onNodeNameChange,
     defaultValue: treeData.nodeName
-  })), "\uFF1A", editValueInputVisible && /*#__PURE__*/_react["default"].createElement("span", null, /*#__PURE__*/_react["default"].createElement(_antd.Input, {
+  })), isColonVisible && /*#__PURE__*/_react["default"].createElement("span", null, "\uFF1A"), editValueInputVisible && /*#__PURE__*/_react["default"].createElement("span", null, /*#__PURE__*/_react["default"].createElement(_antd.Input, {
     className: "normal-text",
     size: "small",
     disabled: !treeData.valueEditable,

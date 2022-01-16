@@ -7,7 +7,7 @@ import TreeClass from './Tree';
 import './styles/editable-tree.css';
 
 import Lang from './lang';
-import { getRandomString, deepComparison, deepClone } from './utils';
+import { getRandomString, deepComparison, deepClone, typeCheck } from './utils';
 
 const lang = Lang();
 class EditableTree extends Component {
@@ -17,6 +17,7 @@ class EditableTree extends Component {
     enableYaml: false,
     enableEdit: true,
     maxLevel: 50,
+    defaultExpandAll: true,
     lang: 'zh_CN'
   };
   dataOrigin = []
@@ -24,7 +25,11 @@ class EditableTree extends Component {
   key=getRandomString()
 
   componentDidMount() {
-    const { data, maxLevel = 50, enableYaml, enableEdit=true, lang="zh_CN" } = this.props;
+    const {
+      data, maxLevel = 50, enableYaml, enableEdit=true, lang="zh_CN",
+      defaultExpandAll=true
+    } = this.props;
+    const { expandedKeys } = this.state;
     if (data) {
       this.dataOrigin = data;
       // default value wrapper
@@ -36,9 +41,10 @@ class EditableTree extends Component {
       this.onDataChange(this.dataOrigin);
       this.setState({
         treeData: formattedData,
-        expandedKeys: keys,
+        expandedKeys: defaultExpandAll ? keys : expandedKeys,
         enableYaml: !!enableYaml,
         enableEdit: !!enableEdit,
+        defaultExpandAll: !!defaultExpandAll,
         maxLevel: maxLevel,
         lang
       });
@@ -47,7 +53,7 @@ class EditableTree extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { data, maxLevel = 50, enableYaml, enableEdit=true, lang="zh_CN" } = nextProps;
-
+    const { defaultExpandAll, expandedKeys } = this.state;
     this.setState({ enableYaml: !!enableYaml, lang, enableEdit: !!enableEdit, maxLevel });
 
     try {
@@ -67,7 +73,7 @@ class EditableTree extends Component {
         this.onDataChange(this.dataOrigin);
         this.setState({
           treeData: formattedData,
-          expandedKeys: keys
+          expandedKeys: defaultExpandAll ? keys : expandedKeys
         });
       }
     } catch (error) {
@@ -106,6 +112,15 @@ class EditableTree extends Component {
   /* add a sub node for now level */
   addSubNode = (key, props) => {
     const modifiedData = this.treeModel.addSubNode(key, props);
+    TreeClass.levelDepthWrapper(this.dataOrigin);
+    this.setState({
+      treeData: this.formatTreeData(modifiedData),
+    }, this.onDataChange(this.dataOrigin));
+  }
+
+  /* set node children */
+  setNodeChildren = (key, children) => {
+    const modifiedData = this.treeModel.setNodeChildren(key, children);
     TreeClass.levelDepthWrapper(this.dataOrigin);
     this.setState({
       treeData: this.formatTreeData(modifiedData),
@@ -198,6 +213,19 @@ class EditableTree extends Component {
     });
   }
 
+  /* loadData */
+  loadData = (node) => {
+    console.log(node);
+    const { loadData = () => {} } = this.props;
+
+    return Promise.resolve(loadData(node)).then(data => {
+      if (data) {
+        data = typeCheck(data, 'array') ? data : [data];
+        this.setNodeChildren(node.key, data);
+      }
+    });
+  }
+
   /* save keys of expanded nodes */
   addExpandedKey = (key) => {
     key = key instanceof Array ? key : [key];
@@ -214,7 +242,7 @@ class EditableTree extends Component {
 
 
   render() {
-    const { treeData } = this.state;
+    const { treeData, defaultExpandAll, expandedKeys} = this.state;
     return (
       <div
         className="editable-tree-wrapper"
@@ -223,9 +251,10 @@ class EditableTree extends Component {
           <Tree
             showLine
             onExpand={this.onExpand}
-            expandedKeys={this.state.expandedKeys}
+            expandedKeys={expandedKeys}
+            loadData={this.loadData}
             // defaultExpandedKeys={this.state.expandedKeys}
-            defaultExpandAll
+            defaultExpandAll={defaultExpandAll}
             treeData={treeData}
           />
         : null
@@ -238,10 +267,12 @@ class EditableTree extends Component {
 EditableTree.propTypes = {
   data: PropTypes.array.isRequired, // tree data, required
   onDataChange: PropTypes.func, // data change callback, default none
+  loadData: PropTypes.func, // load data callback, default none
   maxLevel: PropTypes.number, // tree max level, default 50
   lang: PropTypes.string, // lang - zh_CN/en_US, default zh_CN
   enableYaml: PropTypes.bool, // enable it if you want to parse yaml string when adding a new node, default false
   enableEdit: PropTypes.bool, // disable it if you want to disable tree edit , default true
+  defaultExpandAll: PropTypes.bool // default expand all nodes, default true
 };
 
 export default EditableTree;

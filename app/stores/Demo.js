@@ -13,7 +13,6 @@ class Demo {
           nodeValue: [
             {
               nodeName: '出版者描述',
-              isInEdit: true, // default false
               id: 'publisher description',
               nodeValue: [
                 {

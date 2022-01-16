@@ -15,7 +15,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function TreeNodeDisplay(_ref) {
   var editNameInputVisible = _ref.editNameInputVisible,
+      isColonVisible = _ref.isColonVisible,
       treeData = _ref.treeData,
+      enableEdit = _ref.enableEdit,
       getInToEditable = _ref.getInToEditable,
       editValueInputVisible = _ref.editValueInputVisible,
       lang = _ref.lang;
@@ -25,13 +27,13 @@ function TreeNodeDisplay(_ref) {
     placement: "bottom",
     title: (treeData.nodeName || '').length > 50 ? treeData.nodeName : ''
   }, /*#__PURE__*/_react["default"].createElement("span", {
-    onClick: treeData.nameEditable ? getInToEditable : undefined,
+    onClick: enableEdit && treeData.nameEditable && getInToEditable,
     className: "editable-tree-label normal-text"
-  }, (0, _utils.longNameFormatterNoTail)(treeData.nodeName || '')))), editNameInputVisible && /*#__PURE__*/_react["default"].createElement("span", null, "\uFF1A"), editValueInputVisible && /*#__PURE__*/_react["default"].createElement("span", null, /*#__PURE__*/_react["default"].createElement(_antd.Tooltip, {
+  }, (0, _utils.longNameFormatterNoTail)(treeData.nodeName || '')))), isColonVisible && /*#__PURE__*/_react["default"].createElement("span", null, "\uFF1A"), editValueInputVisible && /*#__PURE__*/_react["default"].createElement("span", null, /*#__PURE__*/_react["default"].createElement(_antd.Tooltip, {
     placement: "bottom",
     title: (treeData.nodeValue || '').length > 50 ? treeData.nodeValue : ''
   }, /*#__PURE__*/_react["default"].createElement("span", {
-    onClick: getInToEditable,
+    onClick: enableEdit && getInToEditable,
     className: "editable-tree-label normal-text"
   }, (0, _utils.longNameFormatterNoTail)(treeData.nodeValue || ''))))) : null;
 }
